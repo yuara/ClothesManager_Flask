@@ -1,0 +1,64 @@
+version: '3.7'
+
+services:
+  web:
+    build: ./services/web
+    command: flask run -h 0.0.0.0
+    volumes:
+      - ./services/web/:/usr/src/app/
+    ports:
+      - 5000:5000
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+      - redis
+
+  db:
+    build: ./services/mysql/
+    volumes:
+      - ./services/mysql/mysql_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=yes
+      - MYSQL_DATABASE=microblog
+      - MYSQL_USER=microblog
+      - MYSQL_PASSWORD=micro
+
+  es:
+    build: ./services/elasticsearch/
+    environment:
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-data:/var/lib/elasticsearch
+    ports:
+      - 9200:9200
+    expose:
+      - 9300
+
+  redis:
+    image: redis:4.0.6-alpine
+    ports:
+      - 6379:6379
+
+  rq-worker:
+    build: ./services/web/
+    command: rq worker -u redis://redis:6379 microblog-tasks
+    volumes:
+      - ./services/web/:/usr/src/app/
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  mysql_data:
+  es-data:
+    driver: local

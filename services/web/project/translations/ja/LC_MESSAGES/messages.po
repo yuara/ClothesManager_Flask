@@ -1,0 +1,345 @@
+# Japanese translations for PROJECT.
+# Copyright (C) 2020 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2020-06-10 15:47+0900\n"
+"PO-Revision-Date: 2020-06-10 16:21+0900\n"
+"Language: ja\n"
+"Language-Team: ja <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+"Last-Translator: \n"
+"X-Generator: Poedit 2.3.1\n"
+
+#: services/web/project/__init__.py:22
+msgid "Please log in to access this page."
+msgstr "このページを表示するには下記のフォームからログインしてください。"
+
+#: services/web/project/translate.py:11
+msgid "Error: the translation service is not configured."
+msgstr "エラー: 翻訳サービスが構成されていません。"
+
+#: services/web/project/translate.py:27
+msgid "Error: the translation service failed."
+msgstr "エラー: 翻訳に失敗しました。"
+
+#: services/web/project/auth/email.py:9
+msgid "[Sobidual] Reset Your Password"
+msgstr "[ソビデュアル]パスワードのリセット"
+
+#: services/web/project/auth/forms.py:9 services/web/project/auth/forms.py:16
+#: services/web/project/main/forms.py:10
+msgid "Username"
+msgstr "ユーザー名"
+
+#: services/web/project/auth/forms.py:10 services/web/project/auth/forms.py:18
+#: services/web/project/auth/forms.py:41
+msgid "Password"
+msgstr "パスワード"
+
+#: services/web/project/auth/forms.py:11
+msgid "Remember Me"
+msgstr "ログイン状態を保存する"
+
+#: services/web/project/auth/forms.py:12
+msgid "Sign In"
+msgstr "サインイン"
+
+#: services/web/project/auth/forms.py:17 services/web/project/auth/forms.py:36
+msgid "Email"
+msgstr "メールアドレス"
+
+#: services/web/project/auth/forms.py:20 services/web/project/auth/forms.py:43
+msgid "Repeat Password"
+msgstr "パスワード（確認）"
+
+#: services/web/project/auth/forms.py:22 services/web/project/auth/routes.py:53
+#: services/web/project/templates/auth/register.html:5
+msgid "Register"
+msgstr "登録"
+
+#: services/web/project/auth/forms.py:27 services/web/project/main/forms.py:22
+msgid "Please use a different username."
+msgstr "別のユーザー名を使用してください。"
+
+#: services/web/project/auth/forms.py:32
+msgid "Please use a different email address."
+msgstr "別のメールアドレスを使用してください。"
+
+#: services/web/project/auth/forms.py:37
+msgid "Request Password Reset."
+msgstr "パスワードのリセット"
+
+#: services/web/project/auth/forms.py:45
+msgid "Request Password Reset"
+msgstr "パスワードのリセット"
+
+#: services/web/project/auth/routes.py:25
+msgid "Invalid username or password"
+msgstr "ユーザー名かメールアドレスが"
+
+#: services/web/project/auth/routes.py:32
+msgid "sign in"
+msgstr "サインイン"
+
+#: services/web/project/auth/routes.py:51
+msgid "Registered the new user successfully!"
+msgstr "新しいユーザーの登録に成功しました！"
+
+#: services/web/project/auth/routes.py:65
+msgid "Check your email for the instructions to reset your password"
+msgstr "パスワードのリセットの手順をメールにて確認してください。"
+
+#: services/web/project/auth/routes.py:68
+#: services/web/project/templates/auth/reset_password_request.html:5
+msgid "Reset Password"
+msgstr "パスワードのリセット"
+
+#: services/web/project/auth/routes.py:83
+msgid "Your password has been reset."
+msgstr "あなたのパスワードはリセットされました。"
+
+#: services/web/project/main/forms.py:11
+msgid "About Me"
+msgstr "アバウトミー"
+
+#: services/web/project/main/forms.py:12 services/web/project/main/forms.py:29
+#: services/web/project/main/forms.py:47
+msgid "Submit"
+msgstr "送信"
+
+#: services/web/project/main/forms.py:27
+msgid "Say something"
+msgstr "何かありましたか？"
+
+#: services/web/project/main/forms.py:33
+msgid "Search"
+msgstr "検索"
+
+#: services/web/project/main/forms.py:45
+msgid "Message"
+msgstr "メッセージ"
+
+#: services/web/project/main/routes.py:43
+msgid "Your post is now live!"
+msgstr "投稿完了！"
+
+#: services/web/project/main/routes.py:53
+#: services/web/project/templates/base.html:21
+msgid "Home"
+msgstr "ホーム"
+
+#: services/web/project/main/routes.py:72
+#: services/web/project/templates/base.html:22
+msgid "Explore"
+msgstr "探索"
+
+#: services/web/project/main/routes.py:117
+msgid "Your changes have been saved."
+msgstr "変更が保存されました。"
+
+#: services/web/project/main/routes.py:122
+#: services/web/project/templates/edit_profile.html:5
+msgid "Edit Profile"
+msgstr "プロフィールの編集"
+
+#: services/web/project/main/routes.py:130
+#: services/web/project/main/routes.py:146
+#, python-format
+msgid "User %(username)s not found."
+msgstr "%(username)s は見つかりません。"
+
+#: services/web/project/main/routes.py:133
+msgid "You cannot follow yourself!"
+msgstr "自分はフォローできません！"
+
+#: services/web/project/main/routes.py:137
+#, python-format
+msgid "You are following %(username)s!"
+msgstr " %(username)s をフォロー中"
+
+#: services/web/project/main/routes.py:149
+msgid "You cannnot unfollow yourself!"
+msgstr "自分のフォロー解除はできません!"
+
+#: services/web/project/main/routes.py:153
+#, python-format
+msgid "You are not following %(username)s."
+msgstr "%(username)s はフォローしていません。"
+
+#: services/web/project/main/routes.py:185
+msgid "No results found"
+msgstr "結果は見つかりませんでした"
+
+#: services/web/project/main/routes.py:199
+msgid "search"
+msgstr "検索"
+
+#: services/web/project/main/routes.py:219
+msgid "Your message has been sent."
+msgstr "メッセージを送信しました。"
+
+#: services/web/project/main/routes.py:222
+msgid "Send Message"
+msgstr "送信"
+
+#: services/web/project/main/routes.py:266
+msgid "An export task is currently in progress"
+msgstr "進行中"
+
+#: services/web/project/main/routes.py:268
+msgid "Exporting posts..."
+msgstr "送信中…"
+
+#: services/web/project/templates/_post.html:16
+#, python-format
+msgid "%(username)s said: %(when)s"
+msgstr "%(username)s : %(when)s"
+
+#: services/web/project/templates/_post.html:26
+msgid "Translate"
+msgstr "翻訳"
+
+#: services/web/project/templates/base.html:4
+msgid "Welcome to Sobidual"
+msgstr "ようこそ！"
+
+#: services/web/project/templates/base.html:33
+msgid "Login"
+msgstr "ログイン"
+
+#: services/web/project/templates/base.html:37
+#: services/web/project/templates/messages.html:4
+msgid "Messages"
+msgstr "メッセージ"
+
+#: services/web/project/templates/base.html:44
+msgid "Profile"
+msgstr "プロフィール"
+
+#: services/web/project/templates/base.html:45
+msgid "Logout"
+msgstr "ログアウト"
+
+#: services/web/project/templates/base.html:94
+msgid "Error: Could not contact server."
+msgstr "エラー：サーバーにアクセスできません。"
+
+#: services/web/project/templates/index.html:5
+#, python-format
+msgid "Hi,%(username)s!"
+msgstr "%(username)s さん、こんにちは"
+
+#: services/web/project/templates/index.html:17
+msgid "Newer posts"
+msgstr "新しい投稿"
+
+#: services/web/project/templates/index.html:22
+msgid "Older posts"
+msgstr "古い投稿"
+
+#: services/web/project/templates/messages.html:12
+msgid "Newer messages"
+msgstr "新しいメッセージ"
+
+#: services/web/project/templates/messages.html:17
+msgid "Older messages"
+msgstr "古いメッセージ"
+
+#: services/web/project/templates/search.html:4
+msgid "Search Results"
+msgstr "詮索結果"
+
+#: services/web/project/templates/search.html:6
+msgid "Results for Users"
+msgstr "ユーザーの検索結果"
+
+#: services/web/project/templates/search.html:27
+msgid "Results for Posts"
+msgstr "投稿の検索結果"
+
+#: services/web/project/templates/search.html:36
+msgid "Previous results"
+msgstr "前の結果"
+
+#: services/web/project/templates/search.html:41
+msgid "Next results"
+msgstr "次の結果"
+
+#: services/web/project/templates/send_message.html:5
+#, python-format
+msgid "Send Message to %(recipient)s"
+msgstr "%(recipient)s にメッセージを送信"
+
+#: services/web/project/templates/user.html:8
+msgid "User"
+msgstr "ユーザー"
+
+#: services/web/project/templates/user.html:11
+#: services/web/project/templates/user_popup.html:13
+msgid "Last seen on"
+msgstr "最終履歴"
+
+#: services/web/project/templates/user.html:13
+#: services/web/project/templates/user_popup.html:16
+#, python-format
+msgid "%(count)d followers"
+msgstr "%(count)d 人のフォロワー"
+
+#: services/web/project/templates/user.html:13
+#: services/web/project/templates/user_popup.html:17
+#, python-format
+msgid "%(count)d following"
+msgstr "%(count)d 人をフォロー"
+
+#: services/web/project/templates/user.html:15
+msgid "Edit your profile"
+msgstr "プロフィールの編集"
+
+#: services/web/project/templates/user.html:17
+msgid "Export your posts"
+msgstr "投稿の送信"
+
+#: services/web/project/templates/user.html:20
+#: services/web/project/templates/user_popup.html:21
+msgid "Follow"
+msgstr "フォロー"
+
+#: services/web/project/templates/user.html:22
+#: services/web/project/templates/user_popup.html:25
+msgid "Unfollow"
+msgstr "解除"
+
+#: services/web/project/templates/user.html:25
+#: services/web/project/templates/user_popup.html:30
+msgid "Send private message"
+msgstr "プライベートメッセージの送信"
+
+#: services/web/project/templates/auth/reset_password.html:5
+msgid "Reset Your Password"
+msgstr "パスワードのリセット"
+
+#: services/web/project/templates/errors/404.html:4
+msgid "File Not Found"
+msgstr "ファイルが見つかりません"
+
+#: services/web/project/templates/errors/404.html:5
+#: services/web/project/templates/errors/500.html:6
+msgid "Back"
+msgstr "戻る"
+
+#: services/web/project/templates/errors/500.html:4
+msgid "An unexpected error has occurred."
+msgstr "予期せぬエラーです。"
+
+#: services/web/project/templates/errors/500.html:5
+msgid "The administrator has been notified. Sorry for the inconvenience..."
+msgstr "予期せぬエラーです。"
