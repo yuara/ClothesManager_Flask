@@ -99,6 +99,7 @@ class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     posts = db.relationship("Post", backref="author", lazy="dynamic")
+    clothes_recorded = db.relationship("Clothes", backref="author", lazy="dynamic")
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     # Many-to-many followers relationship
@@ -212,6 +213,7 @@ class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
             "last_seen": self.last_seen.isoformat() + "Z",
             "about_me": self.about_me,
             "post_count": self.posts.count(),
+            "clothes_count": self.clothes_recorded.count(),
             "follower_count": self.followers.count(),
             "followed_count": self.followed.count(),
             "_links": {
@@ -319,3 +321,46 @@ class Task(db.Model):
     def get_progress(self):
         job = self.get_rq_job()
         return job.meta.get("progress", 0) if job is not None else 100
+
+
+class Clothes(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), index=True)
+    note = db.Column(db.String(140), nullable=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    recorder_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    category_child_id = db.Column(db.Integer, db.ForeignKey("category.child_id"))
+    category = db.relationship("Category", foreign_keys=category_child_id)
+    shape_id = db.Column(db.Integer, db.ForeignKey("shape.id"))
+    shape = db.relationship("Shape", foreign_keys=shape_id)
+
+    def __repr__(self):
+        return f"<Clothes {self.name}>"
+
+
+class Category(db.Model):
+    parent_id = db.Column(db.Integer, primary_key=True)
+    child_id = db.Column(db.Integer, primary_key=True)
+    parent_name = db.Column(db.String(30))
+    child_name = db.Column(db.String(30))
+
+    def __repr__(self):
+        return f"<Category {self.parent_name}:{self.child_name}>"
+
+
+class Shape(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20))
+
+    def __repr__(self):
+        return f"<Shape {self.name}>"
+
+
+def insert_initial_value(*args, **kwargs):
+    db.sesion.add(Shape(name="tight"))
+    db.session.add(Shape(name="medium"))
+    db.session.add(Shape(name="wide"))
+    db.session.commit()
+
+
+db.event.listen(Shape.__table__, "after_create", insert_initial_value)

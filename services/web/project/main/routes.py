@@ -13,8 +13,14 @@ from guess_language import guess_language
 from flask_login import current_user, login_required
 from flask_babel import _, get_locale
 from project import db
-from project.main.forms import EditProfileForm, PostForm, SearchForm, MessagesForm
-from project.models import User, Post, Message, Notification
+from project.main.forms import (
+    EditProfileForm,
+    PostForm,
+    SearchForm,
+    MessagesForm,
+    ClothesForm,
+)
+from project.models import User, Post, Message, Notification, Clothes
 from project.translate import translate
 from project.main import bp
 
@@ -51,7 +57,7 @@ def index():
     return render_template(
         "index.html",
         title=_("Home"),
-        form=form,
+        post_form=form,
         posts=posts.items,
         next_url=next_url,
         prev_url=prev_url,
@@ -268,3 +274,43 @@ def export_posts():
         current_user.launch_task("export_posts", _("Exporting posts..."))
         db.session.commit()
     return redirect(url_for("main.user", username=current_user.username))
+
+
+@bp.route("/add_clothes/")
+@login_required
+def add_clothes():
+    form = ClothesForm()
+    if form.validate_on_submit():
+        clothes = Clothes(
+            name=form.name.data, note=form.note.data, author=current_user,
+        )
+        db.session.add(clothes)
+        db.session.commit()
+        flash("You added your clothes!")
+        return redirect(url_for("main.index"))
+    return render_template("add_clothes.html", title=_("Add clothes"), form=form)
+
+
+@bp.route("/closet/")
+@login_required
+def closet():
+    page = request.args.get("page", 1, type=int)
+    closet_clothes = current_user.clothes_recorded.order_by(
+        Clothes.timestamp.desc()
+    ).paginate(page, current_app.config["POSTS_PER_PAGE"], False)
+    next_url = (
+        url_for("main.closet", page=closet_clothes.next_num)
+        if closet_clothes.has_next
+        else None
+    )
+    prev_url = (
+        url_for("main.closet", page=closet_clothes.prev_num)
+        if closet_clothes.has_prev
+        else None
+    )
+    return render_template(
+        "closet.html",
+        clothes=closet_clothes.items,
+        next_url=next_url,
+        prev_url=prev_url,
+    )

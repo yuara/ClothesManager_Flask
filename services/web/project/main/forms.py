@@ -1,7 +1,7 @@
 from flask import request
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField
-from wtforms.validators import ValidationError, DataRequired, Length
+from wtforms import StringField, TextAreaField, SubmitField, SelectField
+from wtforms.validators import ValidationError, DataRequired, Length, InputRequired
 from flask_babel import lazy_gettext as _l
 from project.models import User
 
@@ -43,5 +43,13 @@ class SearchForm(FlaskForm):
 class MessagesForm(FlaskForm):
     message = TextAreaField(
         _l("Message"), validators=[DataRequired(), Length(min=0, max=140)]
+    )
+    submit = SubmitField(_l("Submit"))
+
+
+class ClothesForm(FlaskForm):
+    name = StringField(_l("Name"), validators=[DataRequired(), Length(min=1, max=20)])
+    note = TextAreaField(
+        _l("Note"), validators=[DataRequired(), Length(min=0, max=140)]
     )
     submit = SubmitField(_l("Submit"))
