@@ -329,10 +329,10 @@ class Clothes(db.Model):
     note = db.Column(db.String(140), nullable=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     recorder_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    category_child_id = db.Column(db.Integer, db.ForeignKey("category.child_id"))
-    category = db.relationship("Category", foreign_keys=category_child_id)
-    shape_id = db.Column(db.Integer, db.ForeignKey("shape.id"))
-    shape = db.relationship("Shape", foreign_keys=shape_id)
+    # category_child_id = db.Column(db.Integer, db.ForeignKey("category.child_id"))
+    # category = db.relationship("Category", foreign_keys=category_child_id)
+    # shape_id = db.Column(db.Integer, db.ForeignKey("shape.id"))
+    # shape = db.relationship("Shape", foreign_keys=shape_id)
 
     def __repr__(self):
         return f"<Clothes {self.name}>"
@@ -356,11 +356,11 @@ class Shape(db.Model):
         return f"<Shape {self.name}>"
 
 
-def insert_initial_value(*args, **kwargs):
-    db.sesion.add(Shape(name="tight"))
-    db.session.add(Shape(name="medium"))
-    db.session.add(Shape(name="wide"))
-    db.session.commit()
-
-
-db.event.listen(Shape.__table__, "after_create", insert_initial_value)
+# def insert_initial_value(*args, **kwargs):
+#     db.sesion.add(Shape(name="tight"))
+#     db.session.add(Shape(name="medium"))
+#     db.session.add(Shape(name="wide"))
+#     db.session.commit()
+#
+#
+# db.event.listen(Shape.__table__, "after_create", insert_initial_value)
