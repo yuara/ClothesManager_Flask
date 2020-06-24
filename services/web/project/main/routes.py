@@ -282,13 +282,14 @@ def add_clothes():
     form = ClothesForm()
     if form.validate_on_submit():
         child_id = form.child_category.data
-        parent_category = Category.query.filter(
-            Category.child_id == child_id
-        ).first_or_404()
+        # parent_category = Category.query.filter(
+        #     Category.child_id == child_id
+        # ).first_or_404()
+        parent_cate = Category.get_parent_id(child_id)
         clothes = Clothes(
             name=form.name.data,
             note=form.note.data,
-            parent_category_id=parent_category.parent_id,
+            parent_category_id=parent_cate,
             child_category_id=form.child_category.data,
             shape_id=form.shape.data,
             author=current_user,

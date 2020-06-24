@@ -346,6 +346,11 @@ class Category(db.Model):
     def __repr__(self):
         return f"<Category {self.parent_name}:{self.child_name}>"
 
+    @classmethod
+    def get_parent_id(self, _child_id):
+        parent_categories = self.query.filter(self.child_id == _child_id).first_or_404()
+        return parent_categories.parent_id
+
 
 class Shape(db.Model):
     id = db.Column(db.Integer, primary_key=True)
