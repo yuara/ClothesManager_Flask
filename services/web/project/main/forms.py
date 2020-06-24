@@ -4,7 +4,7 @@ from wtforms import StringField, TextAreaField, SubmitField, SelectField
 from wtforms.validators import ValidationError, DataRequired, Length, InputRequired
 from flask_babel import lazy_gettext as _l
 from project import db
-from project.models import User, Category, Shape
+from project.models import User, Clothes, Category, Shape
 
 
 class EditProfileForm(FlaskForm):
@@ -65,3 +65,23 @@ class ClothesForm(FlaskForm):
             (x.child_id, x.child_name) for x in Category.query.all()
         ]
         self.shape.choices = [(x.id, x.name) for x in Shape.query.all()]
+
+
+class OutfitForm(FlaskForm):
+    name = StringField(_l("Name"), validators=[DataRequired(), Length(min=1, max=30)])
+    note = TextAreaField(
+        _l("Note"), validators=[DataRequired(), Length(min=0, max=140)]
+    )
+    tops = SelectField(_l("Tops"), coerce=int, validators=[DataRequired()])
+    bottoms = SelectField(_l("Bottoms"), coerce=int, validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+    def __init__(self, *args, **kwargs):
+        super(OutfitForm, self).__init__(*args, **kwargs)
+
+        self.tops.choices = [
+            (x.child_category_id, x.name) for x in Clothes.get_clothes_by_parent_id(1)
+        ]
+        self.bottoms.choices = [
+            (x.child_category_id, x.name) for x in Clothes.get_clothes_by_parent_id(2)
+        ]

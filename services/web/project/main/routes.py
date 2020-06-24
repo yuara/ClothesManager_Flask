@@ -19,6 +19,7 @@ from project.main.forms import (
     SearchForm,
     MessagesForm,
     ClothesForm,
+    OutfitForm,
 )
 from project.models import User, Post, Message, Notification, Clothes, Category, Shape
 from project.translate import translate
@@ -282,9 +283,6 @@ def add_clothes():
     form = ClothesForm()
     if form.validate_on_submit():
         child_id = form.child_category.data
-        # parent_category = Category.query.filter(
-        #     Category.child_id == child_id
-        # ).first_or_404()
         parent_cate = Category.get_parent_id(child_id)
         clothes = Clothes(
             name=form.name.data,
@@ -296,7 +294,7 @@ def add_clothes():
         )
         db.session.add(clothes)
         db.session.commit()
-        flash("You added your clothes!")
+        flash(_("You added your clothes!"))
         return redirect(url_for("main.index"))
     return render_template("add_clothes.html", title=_("Add clothes"), form=form)
 
@@ -324,3 +322,23 @@ def closet():
         next_url=next_url,
         prev_url=prev_url,
     )
+
+
+@bp.route("/set_outfit/", methods=["GET", "POST"])
+@login_required
+def set_outfit():
+    form = OutfitForm()
+    if form.validate_on_submit():
+        categories = [form.tops.data, form.bottoms.data]
+        for category in categories:
+            outfit = Outfit(
+                name=form.name.data,
+                note=form.note.data,
+                clothes_recorded=category,
+                recorder_id=current_user,
+            )
+            db.session.add(outfit)
+            db.session.commit()
+        flash(_("You set your outfit!!"))
+        return redirect(url_for("main.index"))
+    return render_template("set_outfit.html", title=_("Set Outfit"), form=form)
