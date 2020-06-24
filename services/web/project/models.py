@@ -7,7 +7,7 @@ import redis
 import rq
 import base64
 from flask import current_app, url_for
-from flask_login import UserMixin
+from flask_login import current_user, UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from project import db, login
@@ -100,6 +100,7 @@ class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     posts = db.relationship("Post", backref="author", lazy="dynamic")
     clothes_recorded = db.relationship("Clothes", backref="author", lazy="dynamic")
+    outfits = db.relationship("Outfit", backref="author", lazy="dynamic")
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     # Many-to-many followers relationship
@@ -336,6 +337,12 @@ class Clothes(db.Model):
     def __repr__(self):
         return f"<Clothes {self.name}>"
 
+    @classmethod
+    def get_clothes_by_parent_id(self, parent_id):
+        return self.query.filter_by(
+            recorder_id=current_user.id, parent_category_id=parent_id
+        ).all()
+
 
 class Category(db.Model):
     parent_id = db.Column(db.Integer, primary_key=True)
@@ -347,8 +354,8 @@ class Category(db.Model):
         return f"<Category {self.parent_name}:{self.child_name}>"
 
     @classmethod
-    def get_parent_id(self, _child_id):
-        parent_categories = self.query.filter(self.child_id == _child_id).first_or_404()
+    def get_parent_id(self, child_id):
+        parent_categories = self.query.filter_by(child_id=child_id).first_or_404()
         return parent_categories.parent_id
 
 
@@ -360,11 +367,12 @@ class Shape(db.Model):
         return f"<Shape {self.name}>"
 
 
-# def insert_initial_value(*args, **kwargs):
-#     db.sesion.add(Shape(name="tight"))
-#     db.session.add(Shape(name="medium"))
-#     db.session.add(Shape(name="wide"))
-#     db.session.commit()
-#
-#
-# db.event.listen(Shape.__table__, "after_create", insert_initial_value)
+class Outfit(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(30), index=True)
+    note = db.Column(db.String(140), nullable=True)
+    recorder_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Outfit {self.name}>"
