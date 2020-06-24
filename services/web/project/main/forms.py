@@ -3,7 +3,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField, SelectField
 from wtforms.validators import ValidationError, DataRequired, Length, InputRequired
 from flask_babel import lazy_gettext as _l
-from project.models import User
+from project import db
+from project.models import User, Category, Shape
 
 
 class EditProfileForm(FlaskForm):
@@ -52,4 +53,15 @@ class ClothesForm(FlaskForm):
     note = TextAreaField(
         _l("Note"), validators=[DataRequired(), Length(min=0, max=140)]
     )
+    child_category = SelectField(
+        _l("Category"), coerce=int, validators=[InputRequired()]
+    )
+    shape = SelectField(_l("Shape"), coerce=int, validators=[InputRequired()])
     submit = SubmitField(_l("Submit"))
+
+    def __init__(self, *args, **kwargs):
+        super(ClothesForm, self).__init__(*args, **kwargs)
+        self.child_category.choices = [
+            (x.child_id, x.child_name) for x in Category.query.all()
+        ]
+        self.shape.choices = [(x.id, x.name) for x in Shape.query.all()]

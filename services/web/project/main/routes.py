@@ -20,7 +20,7 @@ from project.main.forms import (
     MessagesForm,
     ClothesForm,
 )
-from project.models import User, Post, Message, Notification, Clothes
+from project.models import User, Post, Message, Notification, Clothes, Category, Shape
 from project.translate import translate
 from project.main import bp
 
@@ -276,13 +276,22 @@ def export_posts():
     return redirect(url_for("main.user", username=current_user.username))
 
 
-@bp.route("/add_clothes/")
+@bp.route("/add_clothes/", methods=["GET", "POST"])
 @login_required
 def add_clothes():
     form = ClothesForm()
     if form.validate_on_submit():
+        child_id = form.child_category.data
+        parent_category = Category.query.filter(
+            Category.child_id == child_id
+        ).first_or_404()
         clothes = Clothes(
-            name=form.name.data, note=form.note.data, author=current_user,
+            name=form.name.data,
+            note=form.note.data,
+            parent_category_id=parent_category.parent_id,
+            child_category_id=form.child_category.data,
+            shape_id=form.shape.data,
+            author=current_user,
         )
         db.session.add(clothes)
         db.session.commit()

@@ -1,8 +1,8 @@
 """Insert to Category
 
-Revision ID: e193d834eb13
+Revision ID: c52611041c06
 Revises: 1c5579d05a63
-Create Date: 2020-06-21 22:49:33.202744
+Create Date: 2020-06-22 22:37:09.162472
 
 """
 from alembic import op
@@ -11,7 +11,7 @@ from project.models import Category
 
 
 # revision identifiers, used by Alembic.
-revision = "e193d834eb13"
+revision = "c52611041c06"
 down_revision = "1c5579d05a63"
 branch_labels = None
 depends_on = None
@@ -47,19 +47,19 @@ def upgrade():
             },
             {
                 "parent_id": 2,
-                "child_id": 1,
+                "child_id": 5,
                 "parent_name": "bottoms",
                 "child_name": "pants",
             },
             {
                 "parent_id": 2,
-                "child_id": 2,
+                "child_id": 6,
                 "parent_name": "bottoms",
                 "child_name": "shorts",
             },
             {
                 "parent_id": 2,
-                "child_id": 3,
+                "child_id": 7,
                 "parent_name": "bottoms",
                 "child_name": "skirt",
             },
