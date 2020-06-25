@@ -289,51 +289,43 @@ def export_posts():
 @bp.route("/closet/")
 @login_required
 def closet():
+    category = Category()
     page = request.args.get("page", 1, type=int)
-    closet_clothes = current_user.clothes_recorded.order_by(
-        Clothes.timestamp.desc()
-    ).paginate(page, current_app.config["POSTS_PER_PAGE"], False)
+    user_clothes = current_user.own_clothes.order_by(Clothes.timestamp.desc()).paginate(
+        page, current_app.config["POSTS_PER_PAGE"], False
+    )
     next_url = (
-        url_for("main.closet", page=closet_clothes.next_num)
-        if closet_clothes.has_next
+        url_for("main.closet", page=user_clothes.next_num)
+        if user_clothes.has_next
         else None
     )
     prev_url = (
-        url_for("main.closet", page=closet_clothes.prev_num)
-        if closet_clothes.has_prev
+        url_for("main.closet", page=user_clothes.prev_num)
+        if user_clothes.has_prev
         else None
     )
     return render_template(
-        "closet.html",
-        clothes=closet_clothes.items,
-        next_url=next_url,
-        prev_url=prev_url,
+        "closet.html", clothes=user_clothes.items, next_url=next_url, prev_url=prev_url,
     )
 
 
 @bp.route("/add_clothes/", methods=["GET", "POST"])
 @login_required
 def add_clothes():
-    category = Category.query.all()
     form = ClothesForm()
     if form.validate_on_submit():
-        child_id = form.child_category.data
-        parent_cate = Category.get_parent_id(child_id)
         clothes = Clothes(
             name=form.name.data,
             note=form.note.data,
-            parent_category_id=parent_cate,
-            child_category_id=form.child_category.data,
+            category_id=form.category.data,
             shape_id=form.shape.data,
-            author=current_user,
+            owner=current_user,
         )
         db.session.add(clothes)
         db.session.commit()
         flash(_("You added your clothes!"))
         return redirect(url_for("main.closet"))
-    return render_template(
-        "add_clothes.html", title=_("Add clothes"), form=form, category=category
-    )
+    return render_template("add_clothes.html", title=_("Add clothes"), form=form)
 
 
 @bp.route("/outfits/")
@@ -366,13 +358,8 @@ def outfits():
 def set_outfit():
     form = OutfitForm()
     if form.validate_on_submit():
-        outfit = Outfit(name=form.name.data, note=form.note.data, author=current_user)
+        outfit = Outfit(name=form.name.data, note=form.note.data, owner=current_user)
         db.session.add(outfit)
-        db.session.commit()
-        print(form.tops.data)
-        print(Clothes.query.get(form.tops.data))
-        print(form.bottoms.data)
-        print(Clothes.query.get(form.bottoms.data))
         outfit.put_clothes(Clothes.query.get(form.tops.data))
         outfit.put_clothes(Clothes.query.get(form.bottoms.data))
         db.session.commit()

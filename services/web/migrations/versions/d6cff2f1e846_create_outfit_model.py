@@ -1,8 +1,8 @@
-"""Outfit
+"""Create Outfit model
 
-Revision ID: 230b4263d8eb
-Revises: c52611041c06
-Create Date: 2020-06-24 16:36:43.923674
+Revision ID: d6cff2f1e846
+Revises: 820f319b4898
+Create Date: 2020-06-25 16:07:47.119073
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '230b4263d8eb'
-down_revision = 'c52611041c06'
+revision = 'd6cff2f1e846'
+down_revision = '820f319b4898'
 branch_labels = None
 depends_on = None
 
@@ -22,9 +22,9 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=30), nullable=True),
     sa.Column('note', sa.String(length=140), nullable=True),
-    sa.Column('recorder_id', sa.Integer(), nullable=True),
+    sa.Column('owner_id', sa.Integer(), nullable=True),
     sa.Column('timestamp', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['recorder_id'], ['user.id'], ),
+    sa.ForeignKeyConstraint(['owner_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_outfit_name'), 'outfit', ['name'], unique=False)

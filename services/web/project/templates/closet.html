@@ -7,22 +7,16 @@
   <tr>
     <th></th>
     <th>{{ _('Clothes Name') }}</th>
-    <th>{{ _('Category') }}</th>
-    <th></th>
     <th>{{ _('Addtime') }}</th>
   </tr>
   {% for post in clothes %}
   <tr>
     <td width="70px">
-      <a href="{{ url_for('main.user', username=post.author.username) }}">
-        <img src="{{ post.author.avatar(70) }}">
+      <a href="{{ url_for('main.user', username=post.owner.username) }}">
+        <img src="{{ post.owner.avatar(70) }}">
       </a>
     </td>
-    <td>
-      <span id="post{{ post.id }}">{{ post.name }}</span>
-    </td>
-    <td>{{ post.parent_category_id }}</td>
-    <td>{{ post.child_category_id }}</td>
+    <td>{{ post.name }}</td>
     <td>{{ _('%(when)s', when=moment(post.timestamp).fromNow()) }}</td>
   </tr>
   {% endfor %}

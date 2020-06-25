@@ -92,8 +92,8 @@ followers = db.Table(
 
 clothes_outfits = db.Table(
     "clothes_outfits",
-    db.Column("clothes_id", db.Integer, db.ForeignKey("clothes.id")),
     db.Column("outfit_id", db.Integer, db.ForeignKey("outfit.id")),
+    db.Column("clothes_id", db.Integer, db.ForeignKey("clothes.id")),
 )
 
 
@@ -105,8 +105,6 @@ class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     posts = db.relationship("Post", backref="author", lazy="dynamic")
-    clothes_recorded = db.relationship("Clothes", backref="author", lazy="dynamic")
-    outfits = db.relationship("Outfit", backref="author", lazy="dynamic")
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     # Many-to-many followers relationship
@@ -132,6 +130,8 @@ class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
     tasks = db.relationship("Task", backref="user", lazy="dynamic")
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
+    own_clothes = db.relationship("Clothes", backref="owner", lazy="dynamic")
+    outfits = db.relationship("Outfit", backref="owner", lazy="dynamic")
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -330,41 +330,6 @@ class Task(db.Model):
         return job.meta.get("progress", 0) if job is not None else 100
 
 
-class Clothes(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20), index=True)
-    note = db.Column(db.String(140), nullable=True)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    recorder_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    parent_category_id = db.Column(db.Integer, index=True)
-    child_category_id = db.Column(db.Integer, index=True)
-    shape_id = db.Column(db.Integer, index=True)
-
-    def __repr__(self):
-        return f"<Clothes {self.name}>"
-
-    @classmethod
-    def selected_by_parent_id(self, parent_id):
-        return self.query.filter_by(
-            recorder_id=current_user.id, parent_category_id=parent_id
-        ).all()
-
-
-class Category(db.Model):
-    parent_id = db.Column(db.Integer, primary_key=True)
-    child_id = db.Column(db.Integer, primary_key=True)
-    parent_name = db.Column(db.String(30))
-    child_name = db.Column(db.String(30))
-
-    def __repr__(self):
-        return f"<Category {self.parent_name}:{self.child_name}>"
-
-    @classmethod
-    def get_parent_id(self, child_id):
-        parent_categories = self.query.filter_by(child_id=child_id).first_or_404()
-        return parent_categories.parent_id
-
-
 class Shape(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
@@ -373,27 +338,64 @@ class Shape(db.Model):
         return f"<Shape {self.name}>"
 
 
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    parent_id = db.Column(db.Integer, index=True)
+    child_id = db.Column(db.Integer, index=True)
+    parent_name = db.Column(db.String(30))
+    child_name = db.Column(db.String(30))
+
+    def __repr__(self):
+        return f"<Category {self.id}:{self.parent_name}-{self.child_name}>"
+
+    @classmethod
+    def get_id_by_parent_id(self, parent_id):
+        categories = self.query.filter_by(parent_id=parent_id).all()
+        return [cate.id for cate in categories]
+
+
+class Clothes(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), index=True, nullable=True)
+    note = db.Column(db.String(140), nullable=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    owner_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    category_id = db.Column(db.Integer, index=True)
+    shape_id = db.Column(db.Integer, index=True)
+
+    def __repr__(self):
+        return f"<Clothes {self.name}>"
+
+    @classmethod
+    def get_clothes_by_categoris(self, category_list):
+        clothes_list = []
+        for category_id in category_list:
+            clothes = self.query.filter(
+                self.owner_id == current_user.id, self.category_id == category_id
+            ).all()
+            clothes_list += clothes
+        return clothes_list
+
+
 class Outfit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(30), index=True)
+    name = db.Column(db.String(30), index=True, nullable=True)
     note = db.Column(db.String(140), nullable=True)
-    recorder_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    owner_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    clothes_recorded = db.relationship(
+    set_clothes = db.relationship(
         "Clothes", secondary=clothes_outfits, backref="outfits", lazy="dynamic"
     )
 
+    def __repr__(self):
+        return f"<Outfit {self.name}>"
+
     def put_clothes(self, clothes):
         if not self.has_clothes(clothes):
-            self.clothes_recorded.append(clothes)
+            self.set_clothes.append(clothes)
 
     def has_clothes(self, clothes):
         return (
-            self.clothes_recorded.filter(
-                clothes_outfits.c.clothes_id == clothes.id
-            ).count()
+            self.set_clothes.filter(clothes_outfits.c.clothes_id == clothes.id).count()
             > 0
         )
-
-    def __repr__(self):
-        return f"<Outfit {self.name}>"
