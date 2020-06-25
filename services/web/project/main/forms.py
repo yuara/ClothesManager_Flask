@@ -50,13 +50,11 @@ class MessagesForm(FlaskForm):
 
 class ClothesForm(FlaskForm):
     name = StringField(_l("Name"), validators=[DataRequired(), Length(min=1, max=20)])
-    note = TextAreaField(
-        _l("Note"), validators=[DataRequired(), Length(min=0, max=140)]
-    )
     child_category = SelectField(
         _l("Category"), coerce=int, validators=[InputRequired()]
     )
     shape = SelectField(_l("Shape"), coerce=int, validators=[InputRequired()])
+    note = TextAreaField(_l("Note"), validators=[Length(min=0, max=140)])
     submit = SubmitField(_l("Submit"))
 
     def __init__(self, *args, **kwargs):
@@ -69,19 +67,15 @@ class ClothesForm(FlaskForm):
 
 class OutfitForm(FlaskForm):
     name = StringField(_l("Name"), validators=[DataRequired(), Length(min=1, max=30)])
-    note = TextAreaField(
-        _l("Note"), validators=[DataRequired(), Length(min=0, max=140)]
-    )
     tops = SelectField(_l("Tops"), coerce=int, validators=[DataRequired()])
     bottoms = SelectField(_l("Bottoms"), coerce=int, validators=[DataRequired()])
+    note = TextAreaField(_l("Note"), validators=[Length(min=0, max=140)])
     submit = SubmitField("Submit")
 
     def __init__(self, *args, **kwargs):
         super(OutfitForm, self).__init__(*args, **kwargs)
 
-        self.tops.choices = [
-            (x.child_category_id, x.name) for x in Clothes.get_clothes_by_parent_id(1)
-        ]
+        self.tops.choices = [(x.id, x.name) for x in Clothes.selected_by_parent_id(1)]
         self.bottoms.choices = [
-            (x.child_category_id, x.name) for x in Clothes.get_clothes_by_parent_id(2)
+            (x.id, x.name) for x in Clothes.selected_by_parent_id(2)
         ]

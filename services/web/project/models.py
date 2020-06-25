@@ -90,6 +90,12 @@ followers = db.Table(
     db.Column("followed_id", db.Integer, db.ForeignKey("user.id")),
 )
 
+clothes_outfits = db.Table(
+    "clothes_outfits",
+    db.Column("clothes_id", db.Integer, db.ForeignKey("clothes.id")),
+    db.Column("outfit_id", db.Integer, db.ForeignKey("outfit.id")),
+)
+
 
 class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
     __searchable__ = ["username"]
@@ -338,7 +344,7 @@ class Clothes(db.Model):
         return f"<Clothes {self.name}>"
 
     @classmethod
-    def get_clothes_by_parent_id(self, parent_id):
+    def selected_by_parent_id(self, parent_id):
         return self.query.filter_by(
             recorder_id=current_user.id, parent_category_id=parent_id
         ).all()
@@ -373,6 +379,21 @@ class Outfit(db.Model):
     note = db.Column(db.String(140), nullable=True)
     recorder_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    clothes_recorded = db.relationship(
+        "Clothes", secondary=clothes_outfits, backref="outfits", lazy="dynamic"
+    )
+
+    def put_clothes(self, clothes):
+        if not self.has_clothes(clothes):
+            self.clothes_recorded.append(clothes)
+
+    def has_clothes(self, clothes):
+        return (
+            self.clothes_recorded.filter(
+                clothes_outfits.c.clothes_id == clothes.id
+            ).count()
+            > 0
+        )
 
     def __repr__(self):
         return f"<Outfit {self.name}>"

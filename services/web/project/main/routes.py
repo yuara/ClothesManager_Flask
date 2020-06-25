@@ -21,7 +21,16 @@ from project.main.forms import (
     ClothesForm,
     OutfitForm,
 )
-from project.models import User, Post, Message, Notification, Clothes, Category, Shape
+from project.models import (
+    User,
+    Post,
+    Message,
+    Notification,
+    Clothes,
+    Category,
+    Shape,
+    Outfit,
+)
 from project.translate import translate
 from project.main import bp
 
@@ -277,28 +286,6 @@ def export_posts():
     return redirect(url_for("main.user", username=current_user.username))
 
 
-@bp.route("/add_clothes/", methods=["GET", "POST"])
-@login_required
-def add_clothes():
-    form = ClothesForm()
-    if form.validate_on_submit():
-        child_id = form.child_category.data
-        parent_cate = Category.get_parent_id(child_id)
-        clothes = Clothes(
-            name=form.name.data,
-            note=form.note.data,
-            parent_category_id=parent_cate,
-            child_category_id=form.child_category.data,
-            shape_id=form.shape.data,
-            author=current_user,
-        )
-        db.session.add(clothes)
-        db.session.commit()
-        flash(_("You added your clothes!"))
-        return redirect(url_for("main.index"))
-    return render_template("add_clothes.html", title=_("Add clothes"), form=form)
-
-
 @bp.route("/closet/")
 @login_required
 def closet():
@@ -324,21 +311,71 @@ def closet():
     )
 
 
+@bp.route("/add_clothes/", methods=["GET", "POST"])
+@login_required
+def add_clothes():
+    category = Category.query.all()
+    form = ClothesForm()
+    if form.validate_on_submit():
+        child_id = form.child_category.data
+        parent_cate = Category.get_parent_id(child_id)
+        clothes = Clothes(
+            name=form.name.data,
+            note=form.note.data,
+            parent_category_id=parent_cate,
+            child_category_id=form.child_category.data,
+            shape_id=form.shape.data,
+            author=current_user,
+        )
+        db.session.add(clothes)
+        db.session.commit()
+        flash(_("You added your clothes!"))
+        return redirect(url_for("main.closet"))
+    return render_template(
+        "add_clothes.html", title=_("Add clothes"), form=form, category=category
+    )
+
+
+@bp.route("/outfits/")
+@login_required
+def outfits():
+    page = request.args.get("page", 1, type=int)
+    user_outfits = current_user.outfits.order_by(Outfit.timestamp.desc()).paginate(
+        page, current_app.config["POSTS_PER_PAGE"], False
+    )
+    next_url = (
+        url_for("main.outfits", page=user_outfits.next_num)
+        if user_outfits.has_next
+        else None
+    )
+    prev_url = (
+        url_for("main.outfits", page=user_outfits.prev_num)
+        if user_outfits.has_prev
+        else None
+    )
+    return render_template(
+        "outfits.html",
+        outfits=user_outfits.items,
+        next_url=next_url,
+        prev_url=prev_url,
+    )
+
+
 @bp.route("/set_outfit/", methods=["GET", "POST"])
 @login_required
 def set_outfit():
     form = OutfitForm()
     if form.validate_on_submit():
-        categories = [form.tops.data, form.bottoms.data]
-        for category in categories:
-            outfit = Outfit(
-                name=form.name.data,
-                note=form.note.data,
-                clothes_recorded=category,
-                recorder_id=current_user,
-            )
-            db.session.add(outfit)
-            db.session.commit()
+        outfit = Outfit(name=form.name.data, note=form.note.data, author=current_user)
+        db.session.add(outfit)
+        db.session.commit()
+        print(form.tops.data)
+        print(Clothes.query.get(form.tops.data))
+        print(form.bottoms.data)
+        print(Clothes.query.get(form.bottoms.data))
+        outfit.put_clothes(Clothes.query.get(form.tops.data))
+        outfit.put_clothes(Clothes.query.get(form.bottoms.data))
+        db.session.commit()
         flash(_("You set your outfit!!"))
-        return redirect(url_for("main.index"))
+        return redirect(url_for("main.outfits"))
     return render_template("set_outfit.html", title=_("Set Outfit"), form=form)

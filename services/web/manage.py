@@ -8,6 +8,7 @@ from project.models import (
     Clothes,
     Category,
     Shape,
+    Outfit,
 )
 
 app = create_app()
@@ -26,4 +27,5 @@ def make_shell_content():
         "Clothes": Clothes,
         "Category": Category,
         "Shape": Shape,
+        "Outfit": Outfit,
     }
