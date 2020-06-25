@@ -40,7 +40,7 @@ def create_app(config_class=Config):
     babel.init_app(app)
 
     app.redis = Redis.from_url(app.config["REDIS_URL"])
-    app.task_queue = rq.Queue("microblog-tasks", connection=app.redis)
+    app.task_queue = rq.Queue("ClothesManager-tasks", connection=app.redis)
 
     app.elasticsearch = (
         Elasticsearch(app.config["ELASTICSEARCH_URL"])
@@ -70,7 +70,7 @@ def create_app(config_class=Config):
                 mailhost=(app.config["MAIL_SERVER"], app.config["MAIL_PORT"]),
                 fromaddr="no-reply@" + app.config["MAIL_SERVER"],
                 toaddrs=app.config["ADMINS"],
-                subject="Sobidual Failure",
+                subject="ClothesManager Failure",
                 credentials=auth,
                 secure=secure,
             )
@@ -91,7 +91,7 @@ def create_app(config_class=Config):
         app.logger.addHandler(file_handler)
 
         app.logger.setLevel(logging.INFO)
-        app.logger.info("MYProject startup")
+        app.logger.info("ClothesManager startup")
 
     return app
 
