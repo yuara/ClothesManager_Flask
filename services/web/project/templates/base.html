@@ -32,8 +32,8 @@
         {% if current_user.is_anonymous %}
         <li><a href="{{ url_for('auth.login') }}">{{ _('Login') }}</a></li>
         {% else %}
-        <li><a href="{{ url_for('main.closet') }}">{{ _('Closet') }}</a></li>
-        <li><a href="{{ url_for('main.outfits') }}">{{ _('Outfits') }}</a></li>
+        <li><a href="{{ url_for('clothes.closet') }}">{{ _('Closet') }}</a></li>
+        <li><a href="{{ url_for('clothes.outfits') }}">{{ _('Outfits') }}</a></li>
         <li><a href="{{ url_for('main.user' , username=current_user.username) }}">{{ _('Profile') }}</a></li>
         <li>
           <a href="{{ url_for('main.messages') }}">

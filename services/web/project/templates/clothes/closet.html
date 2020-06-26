@@ -1,32 +1,22 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<h1>{{ _('Outfits') }}</h1>
-<h4><a href="{{ url_for('main.set_outfit') }}">{{ _('Choose your clothes by yourself') }}</a></h4>
-
+<h1>{{ _('Closet') }}</h1>
+<h4><a href="{{ url_for('clothes.add_clothes') }}">{{ _('Add your new clothes') }}</a></h4>
 <table class="table table-hover">
   <tr>
     <th></th>
-    <th>{{ _('Outfit Name') }}</th>
-    <th>{{ _('Tops') }}</th>
-    <th>{{ _('Bottoms') }}</th>
-    <th>{{ _('Settime') }}</th>
+    <th>{{ _('Clothes Name') }}</th>
+    <th>{{ _('Addtime') }}</th>
   </tr>
-  {% for post in outfits %}
+  {% for post in clothes %}
   <tr>
     <td width="70px">
       <a href="{{ url_for('main.user', username=post.owner.username) }}">
         <img src="{{ post.owner.avatar(70) }}">
       </a>
     </td>
-    <td>
-      <span id="post{{ post.id }}">{{ post.name }}</span>
-    </td>
-    {% for clothes in post.set_clothes %}
-    <td>
-      {{ clothes.name }}
-    </td>
-    {% endfor %}
+    <td>{{ post.name }}</td>
     <td>{{ _('%(when)s', when=moment(post.timestamp).fromNow()) }}</td>
   </tr>
   {% endfor %}
