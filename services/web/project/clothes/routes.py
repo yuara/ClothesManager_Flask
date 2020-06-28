@@ -5,6 +5,7 @@ from flask import (
     url_for,
     request,
     current_app,
+    jsonify,
 )
 from flask_login import current_user, login_required
 from flask_babel import _
@@ -21,10 +22,18 @@ from project.models import (
 from project.clothes import bp
 
 
+@bp.route("/_get_categories/")
+def _get_categories():
+    parent = request.args.get("parent", 1, type=int)
+    categories = [
+        (x.id, x.child_name) for x in Category.query.filter_by(parent_id=parent).all()
+    ]
+    return jsonify(categories)
+
+
 @bp.route("/closet/")
 @login_required
 def closet():
-    category = Category()
     page = request.args.get("page", 1, type=int)
     user_clothes = current_user.own_clothes.order_by(Clothes.timestamp.desc()).paginate(
         page, current_app.config["POSTS_PER_PAGE"], False
@@ -39,9 +48,13 @@ def closet():
         if user_clothes.has_prev
         else None
     )
+    user_clothes = user_clothes.items
+    categories = [
+        Category.query.filter_by(id=c.category_id).first() for c in user_clothes
+    ]
     return render_template(
         "clothes/closet.html",
-        clothes=user_clothes.items,
+        clothes=zip(user_clothes, categories),
         next_url=next_url,
         prev_url=prev_url,
     )
@@ -50,22 +63,23 @@ def closet():
 @bp.route("/add_clothes/", methods=["GET", "POST"])
 @login_required
 def add_clothes():
-    form = ClothesForm()
-    if form.validate_on_submit():
+    form = ClothesForm(form_name="ClothesForm")
+    if request.method == "GET":
+        return render_template(
+            "clothes/add_clothes.html", title=_("Add clothes"), form=form
+        )
+    if form.validate_on_submit() and request.form["form_name"] == "ClothesForm":
         clothes = Clothes(
             name=form.name.data,
             note=form.note.data,
-            category_id=form.category.data,
+            category_id=form.child_category.data,
             shape_id=form.shape.data,
             owner=current_user,
         )
         db.session.add(clothes)
         db.session.commit()
         flash(_("You added your clothes!"))
-        return redirect(url_for("clothes.closet"))
-    return render_template(
-        "clothes/add_clothes.html", title=_("Add clothes"), form=form
-    )
+    return redirect(url_for("clothes.closet"))
 
 
 @bp.route("/outfits/")

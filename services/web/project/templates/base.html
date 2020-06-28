@@ -170,39 +170,39 @@
   });
   {% endif %}
 
-  // $(function() {
-  //   var dropdown = {
-  //     parent: $('#select_parent'),
-  //     child: $('#select_child')
-  //   };
-  //
-  //   updateCategories();
-  //
-  //   function updateCategories() {
-  //     var send = {
-  //       parent: dropdown.parent.val()
-  //     };
-  //     dropdown.child.attr('disabled', 'disabled');
-  //     dropdown.child.empty();
-  //     $.getJSON("{{ url_for('clothes._get_categories') }}", send, function(data) {
-  //       data.forEach(function(item) {
-  //         dropdown.child.append(
-  //           $('<option>', {
-  //             value: item[0],
-  //             text: item[1]
-  //           })
-  //         );
-  //       });
-  //       dropdown.child.removeAttr('disabled');
-  //     });
-  //   }
-  //
-  //   dropdown.parent.on('change', function() {
-  //     updateCategories();
-  //   });
-  //
-  // });
-  //
-  //
+  $(function() {
+    var dropdown = {
+      parent: $('#select_parent'),
+      child: $('#select_child')
+    };
+
+    updateCategories();
+
+    function updateCategories() {
+      var send = {
+        parent: dropdown.parent.val()
+      };
+      dropdown.child.attr('disabled', 'disabled');
+      dropdown.child.empty();
+      $.getJSON("{{ url_for('clothes._get_categories') }}", send, function(data) {
+        data.forEach(function(item) {
+          dropdown.child.append(
+            $('<option>', {
+              value: item[0],
+              text: item[1]
+            })
+          );
+        });
+        dropdown.child.removeAttr('disabled');
+      });
+    }
+
+    dropdown.parent.on('change', function() {
+      updateCategories();
+    });
+
+  });
+
+
 </script>
 {% endblock %}

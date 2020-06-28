@@ -7,9 +7,11 @@
   <tr>
     <th></th>
     <th>{{ _('Clothes Name') }}</th>
+    <th>{{ _('Category') }}</th>
+    <th></th>
     <th>{{ _('Addtime') }}</th>
   </tr>
-  {% for post in clothes %}
+  {% for post, category in clothes %}
   <tr>
     <td width="70px">
       <a href="{{ url_for('main.user', username=post.owner.username) }}">
@@ -17,6 +19,8 @@
       </a>
     </td>
     <td>{{ post.name }}</td>
+    <td>{{ category.parent_name }}</td>
+    <td>{{ category.child_name }}</td>
     <td>{{ _('%(when)s', when=moment(post.timestamp).fromNow()) }}</td>
   </tr>
   {% endfor %}
