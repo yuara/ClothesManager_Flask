@@ -1,0 +1,26 @@
+[{
+  "parent_id": 1,
+  "parent_name": "tops",
+  "child_id": 1,
+  "child_name": "t-shirts"
+}, {
+  "parent_id": 1,
+  "parent_name": "tops",
+  "child_id": 2,
+  "child_name": "shirts"
+}, {
+  "parent_id": 1,
+  "parent_name": "tops",
+  "child_id": 3,
+  "child_name": "hoodie"
+}, {
+  "parent_id": 2,
+  "parent_name": "bottoms",
+  "child_id": 1,
+  "child_name": "pants"
+}, {
+  "parent_id": 2,
+  "parent_name": "bottoms",
+  "child_id": 2,
+  "child_name": "skirt"
+}]

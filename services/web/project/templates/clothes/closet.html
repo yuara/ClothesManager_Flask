@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<h1>{{ _('Closet') }}</h1>
+<h4><a href="{{ url_for('clothes.add_clothes') }}">{{ _('Add your new clothes') }}</a></h4>
+<table class="table table-hover">
+  <tr>
+    <th></th>
+    <th>{{ _('Clothes Name') }}</th>
+    <th>{{ _('Category') }}</th>
+    <th></th>
+    <th>{{ _('Addtime') }}</th>
+  </tr>
+  {% for post, category in clothes %}
+  <tr>
+    <td width="70px">
+      <a href="{{ url_for('main.user', username=post.owner.username) }}">
+        <img src="{{ post.owner.avatar(70) }}">
+      </a>
+    </td>
+    <td>{{ post.name }}</td>
+    <td>{{ category.parent_name }}</td>
+    <td>{{ category.child_name }}</td>
+    <td>{{ _('%(when)s', when=moment(post.timestamp).fromNow()) }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<nav aria-label="...">
+  <ul class="pager">
+    <li class="previous{% if not prev_url %} disabled{% endif %}">
+      <a href="{{ prev_url or '#' }}">
+        <span aria-hidden="true">&larr;</span> {{ _('Newer clothes') }}
+      </a>
+    </li>
+    <li class="next{% if not next_url %} disabled{% endif %}">
+      <a href="{{ next_url or '#' }}">
+        {{ _('Older clothes') }} <span aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+{% endblock %}

@@ -13,7 +13,12 @@ from guess_language import guess_language
 from flask_login import current_user, login_required
 from flask_babel import _, get_locale
 from project import db
-from project.main.forms import EditProfileForm, PostForm, SearchForm, MessagesForm
+from project.main.forms import (
+    EditProfileForm,
+    PostForm,
+    SearchForm,
+    MessagesForm,
+)
 from project.models import User, Post, Message, Notification
 from project.translate import translate
 from project.main import bp
@@ -51,7 +56,7 @@ def index():
     return render_template(
         "index.html",
         title=_("Home"),
-        form=form,
+        post_form=form,
         posts=posts.items,
         next_url=next_url,
         prev_url=prev_url,

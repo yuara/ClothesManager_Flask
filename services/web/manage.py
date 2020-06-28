@@ -1,5 +1,15 @@
 from project import create_app, db, cli
-from project.models import User, Post, Notification, Message, Task
+from project.models import (
+    User,
+    Post,
+    Notification,
+    Message,
+    Task,
+    Clothes,
+    Category,
+    Shape,
+    Outfit,
+)
 
 app = create_app()
 cli.register(app)
@@ -14,4 +24,8 @@ def make_shell_content():
         "Message": Message,
         "Notification": Notification,
         "Task": Task,
+        "Clothes": Clothes,
+        "Category": Category,
+        "Shape": Shape,
+        "Outfit": Outfit,
     }

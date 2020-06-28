@@ -7,7 +7,7 @@ import redis
 import rq
 import base64
 from flask import current_app, url_for
-from flask_login import UserMixin
+from flask_login import current_user, UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from project import db, login
@@ -90,6 +90,12 @@ followers = db.Table(
     db.Column("followed_id", db.Integer, db.ForeignKey("user.id")),
 )
 
+clothes_outfits = db.Table(
+    "clothes_outfits",
+    db.Column("outfit_id", db.Integer, db.ForeignKey("outfit.id")),
+    db.Column("clothes_id", db.Integer, db.ForeignKey("clothes.id")),
+)
+
 
 class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
     __searchable__ = ["username"]
@@ -124,6 +130,8 @@ class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
     tasks = db.relationship("Task", backref="user", lazy="dynamic")
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
+    own_clothes = db.relationship("Clothes", backref="owner", lazy="dynamic")
+    outfits = db.relationship("Outfit", backref="owner", lazy="dynamic")
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -193,7 +201,7 @@ class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
 
     def launch_task(self, name, description, *args, **kwargs):
         rq_job = current_app.task_queue.enqueue(
-            "app.tasks." + name, self.id, *args, **kwargs
+            "project.tasks." + name, self.id, *args, **kwargs
         )
         task = Task(id=rq_job.get_id(), name=name, description=description, user=self)
         db.session.add(task)
@@ -212,6 +220,7 @@ class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
             "last_seen": self.last_seen.isoformat() + "Z",
             "about_me": self.about_me,
             "post_count": self.posts.count(),
+            "clothes_count": self.clothes_recorded.count(),
             "follower_count": self.followers.count(),
             "followed_count": self.followed.count(),
             "_links": {
@@ -319,3 +328,78 @@ class Task(db.Model):
     def get_progress(self):
         job = self.get_rq_job()
         return job.meta.get("progress", 0) if job is not None else 100
+
+
+class Shape(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20))
+
+    def __repr__(self):
+        return f"<Shape {self.name}>"
+
+
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    parent_id = db.Column(db.Integer, index=True)
+    child_id = db.Column(db.Integer, index=True)
+    parent_name = db.Column(db.String(30))
+    child_name = db.Column(db.String(30))
+
+    def __repr__(self):
+        return f"<Category {self.id}:{self.parent_name}-{self.child_name}>"
+
+    @classmethod
+    def get_id_by_parent_id(self, parent_id):
+        categories = self.query.filter_by(parent_id=parent_id).all()
+        return [cate.id for cate in categories]
+
+
+class Clothes(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), index=True, nullable=True)
+    note = db.Column(db.String(140), nullable=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    owner_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    category_id = db.Column(db.Integer, index=True)
+    shape_id = db.Column(db.Integer, index=True)
+
+    def __repr__(self):
+        return f"<Clothes {self.name}>"
+
+    @classmethod
+    def get_clothes_by_categoris(self, category_list):
+        clothes_list = []
+        for category_id in category_list:
+            clothes = self.query.filter(
+                self.owner_id == current_user.id, self.category_id == category_id
+            ).all()
+            clothes_list += clothes
+        return clothes_list
+
+
+class Outfit(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(30), index=True, nullable=True)
+    note = db.Column(db.String(140), nullable=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    set_clothes = db.relationship(
+        "Clothes", secondary=clothes_outfits, backref="outfits", lazy="dynamic"
+    )
+
+    def __repr__(self):
+        return f"<Outfit {self.name}>"
+
+    def put_clothes(self, clothes):
+        if not self.has_clothes(clothes):
+            self.set_clothes.append(clothes)
+
+    # def remove_clothes(self, clothes):
+    #     if self.has_clothes(clothes):
+    #         self.set_clothes.remove(clothes)
+    #
+    def has_clothes(self, clothes):
+        return (
+            self.set_clothes.filter(clothes_outfits.c.clothes_id == clothes.id).count()
+            > 0
+        )
