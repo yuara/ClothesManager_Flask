@@ -140,6 +140,10 @@
     $('#message_count').css('visibility', n ? 'visible' : 'hidden');
   }
 
+  function set_task_progress(task_id, progress) {
+    $('#' + task_id + '-progress').text(progress);
+  }
+
   {% if current_user.is_authenticated %}
   $(function() {
     var since = 0;
@@ -166,8 +170,39 @@
   });
   {% endif %}
 
-  function _set_task_progress(task_id, progress) {
-    $('#' + task_id + '-progress').text(progress);
-  }
+  // $(function() {
+  //   var dropdown = {
+  //     parent: $('#select_parent'),
+  //     child: $('#select_child')
+  //   };
+  //
+  //   updateCategories();
+  //
+  //   function updateCategories() {
+  //     var send = {
+  //       parent: dropdown.parent.val()
+  //     };
+  //     dropdown.child.attr('disabled', 'disabled');
+  //     dropdown.child.empty();
+  //     $.getJSON("{{ url_for('clothes._get_categories') }}", send, function(data) {
+  //       data.forEach(function(item) {
+  //         dropdown.child.append(
+  //           $('<option>', {
+  //             value: item[0],
+  //             text: item[1]
+  //           })
+  //         );
+  //       });
+  //       dropdown.child.removeAttr('disabled');
+  //     });
+  //   }
+  //
+  //   dropdown.parent.on('change', function() {
+  //     updateCategories();
+  //   });
+  //
+  // });
+  //
+  //
 </script>
 {% endblock %}

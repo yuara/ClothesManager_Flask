@@ -201,7 +201,7 @@ class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
 
     def launch_task(self, name, description, *args, **kwargs):
         rq_job = current_app.task_queue.enqueue(
-            "app.tasks." + name, self.id, *args, **kwargs
+            "project.tasks." + name, self.id, *args, **kwargs
         )
         task = Task(id=rq_job.get_id(), name=name, description=description, user=self)
         db.session.add(task)
@@ -394,6 +394,10 @@ class Outfit(db.Model):
         if not self.has_clothes(clothes):
             self.set_clothes.append(clothes)
 
+    # def remove_clothes(self, clothes):
+    #     if self.has_clothes(clothes):
+    #         self.set_clothes.remove(clothes)
+    #
     def has_clothes(self, clothes):
         return (
             self.set_clothes.filter(clothes_outfits.c.clothes_id == clothes.id).count()

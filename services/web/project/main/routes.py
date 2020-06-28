@@ -19,12 +19,7 @@ from project.main.forms import (
     SearchForm,
     MessagesForm,
 )
-from project.models import (
-    User,
-    Post,
-    Message,
-    Notification,
-)
+from project.models import User, Post, Message, Notification
 from project.translate import translate
 from project.main import bp
 

@@ -20,9 +20,9 @@ services:
       - ./services/mysql/mysql_data:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=yes
-      - MYSQL_DATABASE=microblog
-      - MYSQL_USER=microblog
-      - MYSQL_PASSWORD=micro
+      - MYSQL_DATABASE=cmdb
+      - MYSQL_USER=ClothesManager
+      - MYSQL_PASSWORD=cm
 
   es:
     build: ./services/elasticsearch/
@@ -49,7 +49,7 @@ services:
 
   rq-worker:
     build: ./services/web/
-    command: rq worker -u redis://redis:6379 microblog-tasks
+    command: rq worker -u redis://redis:6379 ClothesManager-tasks
     volumes:
       - ./services/web/:/usr/src/app/
     env_file:
