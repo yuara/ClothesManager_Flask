@@ -27,6 +27,8 @@ gunicorn = "*"
 pymysql = "*"
 httpie = "*"
 flask-httpauth = "*"
+scrapy = "*"
+uwsgi = "*"
 
 [requires]
 python_version = "3.8"
