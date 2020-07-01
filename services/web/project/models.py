@@ -403,3 +403,19 @@ class Outfit(db.Model):
             self.set_clothes.filter(clothes_outfits.c.clothes_id == clothes.id).count()
             > 0
         )
+
+
+class Tenki(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    area = db.Column(db.String(20))
+    prefecture = db.Column(db.String(20))
+    city = db.Column(db.String(20))
+    clothes_index = db.Column(db.Integer)
+    weather = db.Column(db.String(30), nullable=True)
+    highest_temp = db.Column(db.Integer, nullable=True)
+    lowest_temp = db.Column(db.Integer, nullable=True)
+    rain_chance = db.Column(db.Integer, nullable=True)
+    update_time = db.Column(db.DateTime, index=True)
+
+    def __repr__(self):
+        return f"<Tenki {self.id}:{self.update_date}>"
