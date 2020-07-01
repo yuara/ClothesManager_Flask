@@ -23,6 +23,8 @@ from project.models import User, Post, Message, Notification
 from project.translate import translate
 from project.main import bp
 
+from project.tasks import scrape_with_crocher
+
 
 @bp.before_app_request
 def before_request():
@@ -268,8 +270,17 @@ def notifications():
 @login_required
 def export_posts():
     if current_user.get_task_in_progress("export_posts"):
-        flash(_("An export task is currently in progress"))
+        flash(_("An export task is currently in progress."))
     else:
         current_user.launch_task("export_posts", _("Exporting posts..."))
         db.session.commit()
     return redirect(url_for("main.user", username=current_user.username))
+
+
+@bp.route("/scrape_tenki/")
+@login_required
+def scrape_tenki():
+
+    scrape_with_crocher(logging=True)
+
+    return redirect(url_for("main.index"))

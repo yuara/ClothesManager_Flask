@@ -29,6 +29,7 @@ httpie = "*"
 flask-httpauth = "*"
 scrapy = "*"
 uwsgi = "*"
+crochet = "*"
 
 [requires]
 python_version = "3.8"
