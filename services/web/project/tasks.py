@@ -7,7 +7,7 @@ from rq import get_current_job
 from scrapy.crawler import CrawlerRunner
 from scrapy.settings import Settings
 from scrapy.utils.log import configure_logging
-from project.scrape.tenki import TenkiSpider
+from project.scraper import TenkiSpider
 from project import create_app, db
 from project.models import User, Post, Task
 from project.email import send_email
@@ -35,8 +35,8 @@ def _set_task_progress(progress):
 def _get_spider_settings():
     settings = Settings()
     pipelines = {
-        "project.scrape.pipelines.ValidationPipeline": 100,
-        "project.scrape.pipelines.TenkiPipeline": 200,
+        "project.scraper.ValidationPipeline": 100,
+        "project.scraper.TenkiPipeline": 200,
     }
     settings.set("DOWNLOAD_DELAY", 3)
     settings.set("ITEM_PIPELINES", pipelines)
@@ -87,18 +87,6 @@ def export_posts(user_id):
 
         except:
             print(data)
-    except:
-        app.logger.error("Unhandled exception", exc_info=sys.exc_info())
-    finally:
-        _set_task_progress(100)
-
-
-def scrape_tenki():
-    try:
-        _set_task_progress(0)
-        scrape_with_crocher()
-        time.sleep(20)
-
     except:
         app.logger.error("Unhandled exception", exc_info=sys.exc_info())
     finally:
