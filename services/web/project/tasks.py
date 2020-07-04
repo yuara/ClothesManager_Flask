@@ -1,21 +1,19 @@
 import json
 import sys
 import time
-import crochet
+from twisted.internet import reactor
 from flask import render_template, jsonify
 from rq import get_current_job
-from scrapy.crawler import CrawlerRunner
+from scrapy.crawler import CrawlerRunner, CrawlerProcess
 from scrapy.settings import Settings
 from scrapy.utils.log import configure_logging
-from project.scraper import TenkiSpider
 from project import create_app, db
 from project.models import User, Post, Task
 from project.email import send_email
+from project.scraper import TenkiSpider
 
 app = create_app()
 app.app_context().push()
-
-crochet.setup()
 
 
 def _set_task_progress(progress):
@@ -30,27 +28,6 @@ def _set_task_progress(progress):
         if progress >= 100:
             task.complete = True
         db.session.commit()
-
-
-def _get_spider_settings():
-    settings = Settings()
-    pipelines = {
-        "project.scraper.ValidationPipeline": 100,
-        "project.scraper.TenkiPipeline": 200,
-    }
-    settings.set("DOWNLOAD_DELAY", 3)
-    settings.set("ITEM_PIPELINES", pipelines)
-    return settings
-
-
-@crochet.run_in_reactor
-def scrape_with_crocher(logging=False):
-    crawl_runner = CrawlerRunner(_get_spider_settings())
-
-    if logging:
-        configure_logging()
-
-    crawl_runner.crawl(TenkiSpider)
 
 
 def export_posts(user_id):
@@ -91,3 +68,27 @@ def export_posts(user_id):
         app.logger.error("Unhandled exception", exc_info=sys.exc_info())
     finally:
         _set_task_progress(100)
+
+
+def _get_spider_settings():
+    settings = Settings()
+    pipelines = {
+        "project.scraper.TenkiPipeline": 200,
+    }
+    settings.set("DOWNLOAD_DELAY", 1)
+    settings.set("FEED_EXPORT_ENCODING", "utf-8")
+    settings.set("ITEM_PIPELINES", pipelines)
+    return settings
+
+
+def scrape_tenki(logging=False):
+    def scrape_done(_):
+        _set_task_progress(100)
+        reactor.stop()
+
+    _set_task_progress(0)
+    crawl_runner = CrawlerRunner(_get_spider_settings())
+    result = crawl_runner.crawl(TenkiSpider)
+    result.addBoth(scrape_done)
+
+    reactor.run()
