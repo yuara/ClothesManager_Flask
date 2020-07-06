@@ -6,11 +6,10 @@ from flask import render_template, jsonify
 from rq import get_current_job
 from scrapy.crawler import CrawlerRunner, CrawlerProcess
 from scrapy.settings import Settings
-from scrapy.utils.log import configure_logging
 from project import create_app, db
 from project.models import User, Post, Task
 from project.email import send_email
-from project.scraper import TenkiSpider
+from project.scraper import ForecastSpider
 
 app = create_app()
 app.app_context().push()
@@ -73,7 +72,7 @@ def export_posts(user_id):
 def _get_spider_settings():
     settings = Settings()
     pipelines = {
-        "project.scraper.TenkiPipeline": 200,
+        "project.scraper.ForecastPipeline": 200,
     }
     settings.set("DOWNLOAD_DELAY", 1)
     settings.set("FEED_EXPORT_ENCODING", "utf-8")
@@ -81,14 +80,14 @@ def _get_spider_settings():
     return settings
 
 
-def scrape_tenki(logging=False):
+def scrape_forecast():
     def scrape_done(_):
         _set_task_progress(100)
         reactor.stop()
 
     _set_task_progress(0)
     crawl_runner = CrawlerRunner(_get_spider_settings())
-    result = crawl_runner.crawl(TenkiSpider)
+    result = crawl_runner.crawl(ForecastSpider)
     result.addBoth(scrape_done)
 
     reactor.run()

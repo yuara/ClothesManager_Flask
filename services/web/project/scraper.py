@@ -5,10 +5,10 @@ import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 from project import create_app, db
-from project.models import Tenki
+from project.models import Forecast
 
 
-class TenkiItem(scrapy.Item):
+class ForecastItem(scrapy.Item):
     area = scrapy.Field()
     prefecture = scrapy.Field()
     clothes_info = scrapy.Field()
@@ -23,8 +23,8 @@ class TenkiItem(scrapy.Item):
     clothes_index = scrapy.Field()
 
 
-class TenkiSpider(CrawlSpider):
-    name = "tenki"
+class ForecastSpider(CrawlSpider):
+    name = "forecast"
     allowed_domains = ["tenki.jp"]
     start_urls = ["https://tenki.jp/indexes/dress/"]
 
@@ -33,7 +33,7 @@ class TenkiSpider(CrawlSpider):
     )
 
     def parse_item(self, response):
-        item = TenkiItem()
+        item = ForecastItem()
 
         place = response.css("#delimiter ol li a span::text").extract()
         item["area"] = place[-2]
@@ -57,7 +57,7 @@ class TenkiSpider(CrawlSpider):
         yield item
 
 
-class TenkiPipeline(object):
+class ForecastPipeline(object):
     def __init__(self):
         app = create_app()
         app.app_context().push()
@@ -74,10 +74,10 @@ class TenkiPipeline(object):
 
         city = item["weather_city"][0]
 
-        newest_tenki_data = Tenki.query.filter_by(
+        latest_forecast_data = Forecast.query.filter_by(
             city=city, update_time=update_time
         ).first()
-        if newest_tenki_data:
+        if latest_forecast_data:
             self.progress += 1
             print(self.progress)
             raise scrapy.exceptions.DropItem("Already inserted this items.")
@@ -112,7 +112,7 @@ class TenkiPipeline(object):
             self.progress += 1
             print(self.progress)
 
-            tenki = Tenki(
+            forecast = Forecast(
                 area=area,
                 prefecture=prefecture,
                 city=city,
@@ -123,5 +123,5 @@ class TenkiPipeline(object):
                 clothes_index=clothes_index,
                 update_time=update_time,
             )
-            db.session.add(tenki)
+            db.session.add(forecast)
             db.session.commit()
