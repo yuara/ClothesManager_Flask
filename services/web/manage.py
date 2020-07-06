@@ -9,7 +9,7 @@ from project.models import (
     Category,
     Shape,
     Outfit,
-    Tenki,
+    Forecast,
 )
 
 app = create_app()
@@ -29,5 +29,5 @@ def make_shell_content():
         "Category": Category,
         "Shape": Shape,
         "Outfit": Outfit,
-        "Tenki": Tenki,
+        "Forecast": Forecast,
     }

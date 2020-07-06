@@ -405,7 +405,7 @@ class Outfit(db.Model):
         )
 
 
-class Tenki(db.Model):
+class Forecast(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     area = db.Column(db.String(20))
     prefecture = db.Column(db.String(20))
@@ -418,4 +418,4 @@ class Tenki(db.Model):
     update_time = db.Column(db.DateTime, index=True)
 
     def __repr__(self):
-        return f"<Tenki {self.id}:{self.update_date}>"
+        return f"<Forecast {self.id}:{self.update_date}>"

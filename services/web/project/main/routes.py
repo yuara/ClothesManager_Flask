@@ -19,7 +19,7 @@ from project.main.forms import (
     SearchForm,
     MessagesForm,
 )
-from project.models import User, Post, Message, Notification
+from project.models import User, Post, Message, Notification, Forecast
 from project.translate import translate
 from project.main import bp
 
@@ -47,19 +47,14 @@ def index():
         db.session.commit()
         flash(_("Your post is now live!"))
         return redirect(url_for("main.index"))
-    page = request.args.get("page", 1, type=int)
-    posts = current_user.followed_posts().paginate(
-        page, current_app.config["POSTS_PER_PAGE"], False
-    )
-    next_url = url_for("main.index", page=posts.next_num) if posts.has_next else None
-    prev_url = url_for("main.index", page=posts.prev_num) if posts.has_prev else None
+    latest_post = current_user.posts.order_by(Post.timestamp.desc()).first()
+    all_forecast = Forecast.query.all()
     return render_template(
         "index.html",
         title=_("Home"),
         post_form=form,
-        posts=posts.items,
-        next_url=next_url,
-        prev_url=prev_url,
+        post=latest_post,
+        all_forecast=all_forecast,
     )
 
 
@@ -180,10 +175,10 @@ def search():
     # if not g.search_form.validate():
     #     return redirect(url_for("main.explore"))
     page = request.args.get("page", 1, type=int)
-    posts, ptotal = Post.search(
+    users, utotal = User.search(
         g.search_form.q.data, page, current_app.config["POSTS_PER_PAGE"]
     )
-    users, utotal = User.search(
+    posts, ptotal = Post.search(
         g.search_form.q.data, page, current_app.config["POSTS_PER_PAGE"]
     )
     if not ptotal and not utotal:
@@ -275,12 +270,15 @@ def export_posts():
     return redirect(url_for("main.user", username=current_user.username))
 
 
-@bp.route("/scrape_tenki/")
+@bp.route("/scrape_forecast/")
 @login_required
-def scrape_tenki():
-    if current_user.get_task_in_progress("scrape_tenki"):
+def scrape_forecast():
+    if current_user.get_task_in_progress("scrape_forecast"):
         flash(_("An export task is currently in progress."))
     else:
-        current_user.launch_task("scrape_tenki", _("Scraping tenki..."))
+        current_user.launch_task("scrape_forecast", _("Scraping forecast..."))
         db.session.commit()
-    return redirect(url_for("main.index"))
+    next_page = request.args.get("next")
+    if not next_page or url_parse(next_page).netloc != "":
+        next_page = url_for("main.index")
+    return redirect(next_page)

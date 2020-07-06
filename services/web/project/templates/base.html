@@ -20,7 +20,6 @@
       <ul class="nav navbar-nav">
         <li><a href="{{ url_for('main.index') }}">{{ _('Home') }}</a></li>
         <li><a href="{{ url_for('main.explore') }}">{{ _('Explore') }}</a></li>
-        <li><a href="{{ url_for('main.scrape_tenki') }}">{{ _('Scrape') }}</a></li>
       </ul>
       {% if g.search_form %}
       <form class="navbar-form navbar-left" method="get" action="{{ url_for('main.search') }}">
@@ -59,10 +58,16 @@
   {% with tasks = current_user.get_tasks_in_progress() %}
   {% if tasks %}
   {% for task in tasks %}
+  {% if task.name == 'scrape_forecast' %}
+  <div class="alert alert-info" role="alert">
+    {{ task.description }}
+  </div>
+  {% else %}
   <div class="alert alert-success" role="alert">
     {{ task.description }}
     <span id="{{ task.id }}-progress">{{ task.get_progress() }}</span>%
   </div>
+  {% endif %}
   {% endfor %}
   {% endif %}
   {% endwith %}
@@ -169,6 +174,11 @@
       );
     }, 10000);
   });
+  $(function() {
+    setInterval(function() {
+      $.ajax('{{ url_for('main.scrape_forecast') }}');
+    }, 600000);
+  });
   {% endif %}
 
   $(function() {
@@ -176,9 +186,7 @@
       parent: $('#select_parent'),
       child: $('#select_child')
     };
-
     updateCategories();
-
     function updateCategories() {
       var send = {
         parent: dropdown.parent.val()
@@ -197,11 +205,9 @@
         dropdown.child.removeAttr('disabled');
       });
     }
-
     dropdown.parent.on('change', function() {
       updateCategories();
     });
-
   });
 
 
