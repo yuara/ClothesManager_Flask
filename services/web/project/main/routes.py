@@ -19,7 +19,7 @@ from project.main.forms import (
     SearchForm,
     MessagesForm,
 )
-from project.models import User, Post, Message, Notification, Forecast
+from project.models import User, Post, Message, Notification, Forecast, Location
 from project.translate import translate
 from project.main import bp
 
@@ -80,6 +80,7 @@ def explore():
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
+    location = Location.query.filter_by(id=user.location_id).first()
     page = request.args.get("page", 1, type=int)
     posts = user.posts.order_by(Post.timestamp.desc()).paginate(
         page, current_app.config["POSTS_PER_PAGE"], False
@@ -95,7 +96,12 @@ def user(username):
         else None
     )
     return render_template(
-        "user.html", user=user, posts=posts.items, next_url=next_url, prev_url=prev_url,
+        "user.html",
+        user=user,
+        location=location,
+        posts=posts.items,
+        next_url=next_url,
+        prev_url=prev_url,
     )
 
 
@@ -113,6 +119,7 @@ def edit_profile():
     if form.validate_on_submit():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
+        current_user.location_id = form.location_pref.data
         db.session.commit()
         flash(_("Your changes have been saved."))
         return redirect(url_for("main.edit_profile"))
@@ -197,8 +204,8 @@ def search():
     return render_template(
         "search.html",
         title=_("search"),
-        users=users,
-        utotal=utotal,
+        # users=users,
+        # utotal=utotal,
         posts=posts,
         ptotal=ptotal,
         next_url=next_url,

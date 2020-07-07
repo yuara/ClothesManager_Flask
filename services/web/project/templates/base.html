@@ -183,6 +183,35 @@
 
   $(function() {
     var dropdown = {
+      area: $('#select_area'),
+      pref: $('#select_pref')
+    };
+    updateLocations();
+    function updateLocations() {
+      var send = {
+        area: dropdown.area.val()
+      };
+      dropdown.pref.attr('disabled', 'disabled');
+      dropdown.pref.empty();
+      $.getJSON("{{ url_for('auth._get_locations') }}", send, function(data) {
+        data.forEach(function(item) {
+          dropdown.pref.append(
+            $('<option>', {
+              value: item[0],
+              text: item[1]
+            })
+          );
+        });
+        dropdown.pref.removeAttr('disabled');
+      });
+    }
+    dropdown.area.on('change', function() {
+      updateLocations();
+    });
+  });
+
+  $(function() {
+    var dropdown = {
       parent: $('#select_parent'),
       child: $('#select_child')
     };

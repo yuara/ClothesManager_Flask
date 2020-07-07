@@ -132,6 +132,7 @@ class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
     token_expiration = db.Column(db.DateTime)
     own_clothes = db.relationship("Clothes", backref="owner", lazy="dynamic")
     outfits = db.relationship("Outfit", backref="owner", lazy="dynamic")
+    location_id = db.Column(db.Integer, index=True)
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -419,3 +420,13 @@ class Forecast(db.Model):
 
     def __repr__(self):
         return f"<Forecast {self.id}:{self.update_date}>"
+
+
+class Location(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    area_id = db.Column(db.Integer)
+    pref_id = db.Column(db.Integer)
+    city_id = db.Column(db.Integer)
+    area_name = db.Column(db.String(20))
+    pref_name = db.Column(db.String(20))
+    city_name = db.Column(db.String(20))

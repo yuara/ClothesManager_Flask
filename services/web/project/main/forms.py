@@ -1,20 +1,33 @@
 from flask import request
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField
+from wtforms import StringField, TextAreaField, SelectField, HiddenField, SubmitField
 from wtforms.validators import ValidationError, DataRequired, Length
 from flask_babel import lazy_gettext as _l
 from project import db
-from project.models import User
+from project.models import User, Location
 
 
 class EditProfileForm(FlaskForm):
     username = StringField(_l("Username"), validators=[DataRequired()])
     about_me = TextAreaField(_l("About Me"), validators=[Length(min=0, max=140)])
+    location_area = SelectField(_l("Area"), coerce=int, id="select_area")
+    location_pref = SelectField(
+        _l("Prefecture"), coerce=int, id="select_pref", validators=[DataRequired()],
+    )
     submit = SubmitField(_l("Submit"))
 
     def __init__(self, original_username, *args, **kwargs):
         super(EditProfileForm, self).__init__(*args, **kwargs)
         self.original_username = original_username
+
+        self.location_area.choices = (
+            db.session.query(Location.area_id, Location.area_name)
+            .distinct(Location.area_name)
+            .all()
+        )
+        self.location_pref.choices = db.session.query(
+            Location.id, Location.pref_name
+        ).all()
 
     def validate_username(self, username):
         if username.data != self.original_username:

@@ -10,6 +10,7 @@ from project.models import (
     Shape,
     Outfit,
     Forecast,
+    Location,
 )
 
 app = create_app()
@@ -30,4 +31,5 @@ def make_shell_content():
         "Shape": Shape,
         "Outfit": Outfit,
         "Forecast": Forecast,
+        "Location": Location,
     }

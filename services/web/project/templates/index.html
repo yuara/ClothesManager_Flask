@@ -8,21 +8,38 @@
 {{ wtf.quick_form(post_form) }}
 <br>
 {% endif %}
+{% if post %}
+{% include '_post.html' %}
+{% elif posts %}
 {% for post in posts %}
 {% include '_post.html' %}
 {% endfor %}
-<nav aria-label="...">
-  <ul class="pager">
-    <li class="previous{% if not prev_url %} disabled{% endif %}">
-      <a href="{{ prev_url or '#' }}">
-        <span aria-hidden="true">&larr;</span> {{ _('Newer posts') }}
-      </a>
-    </li>
-    <li class="next{% if not next_url %} disabled{% endif %}">
-      <a href="{{ next_url or '#' }}">
-        {{ _('Older posts') }} <span aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-  </ul>
-</nav>
+{% endif %}
+{% if all_forecast %}
+<table class="table table-hover">
+  <tr>
+    <th>{{ _('Prefecture') }}</th>
+    <th>{{ _('Weather') }}</th>
+    <th>{{ _('High / Low') }}</th>
+    <th>{{ _('Chance of Rain') }}</th>
+  </tr>
+  {% for forecast in all_forecast %}
+  <tr>
+    <td>
+      {{ forecast.prefecture }}
+    </td>
+    <td>
+      {{ forecast.weather }}
+    </td>
+    <td>
+      {{ forecast.highest_temp }} / {{ forecast.lowest_temp }}
+    </td>
+    <td>
+      {{ forecast.rain_chance }}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+<br><br>
+{% endif %}
 {% endblock %}
