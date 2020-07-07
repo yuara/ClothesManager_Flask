@@ -408,9 +408,7 @@ class Outfit(db.Model):
 
 class Forecast(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    area = db.Column(db.String(20))
-    prefecture = db.Column(db.String(20))
-    city = db.Column(db.String(20))
+    location_id = db.Column(db.Integer, index=True)
     clothes_index = db.Column(db.Integer)
     weather = db.Column(db.String(30), nullable=True)
     highest_temp = db.Column(db.Integer, nullable=True)
@@ -419,7 +417,7 @@ class Forecast(db.Model):
     update_time = db.Column(db.DateTime, index=True)
 
     def __repr__(self):
-        return f"<Forecast {self.id}:{self.update_date}>"
+        return f"<Forecast {self.id}:{self.update_time}>"
 
 
 class Location(db.Model):
@@ -430,3 +428,6 @@ class Location(db.Model):
     area_name = db.Column(db.String(20))
     pref_name = db.Column(db.String(20))
     city_name = db.Column(db.String(20))
+
+    def __repr__(self):
+        return f"<Location {self.id}:{self.pref_name}/{self.city_name}>"

@@ -5,11 +5,10 @@ import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 from project import create_app, db
-from project.models import Forecast
+from project.models import Forecast, Location
 
 
 class ForecastItem(scrapy.Item):
-    area = scrapy.Field()
     prefecture = scrapy.Field()
     clothes_info = scrapy.Field()
     weather = scrapy.Field()
@@ -36,7 +35,6 @@ class ForecastSpider(CrawlSpider):
         item = ForecastItem()
 
         place = response.css("#delimiter ol li a span::text").extract()
-        item["area"] = place[-2]
         item["prefecture"] = place[-1]
 
         item["update_time"] = response.css(".date-time ::text").extract_first()
@@ -62,6 +60,8 @@ class ForecastPipeline(object):
         app = create_app()
         app.app_context().push()
         self.progress = 0
+        self.scraped = 0
+        self.err = 0
 
     def process_item(self, item, spider):
 
@@ -72,21 +72,30 @@ class ForecastPipeline(object):
             year=today.year, month=today.month, day=today.day, hour=update_time
         )
 
+        prefecture = item["prefecture"]
         city = item["weather_city"][0]
 
+        location = Location.query.filter_by(
+            pref_name=prefecture, city_name=city
+        ).first()
+        if location is None:
+            self.err += 1
+            self.progress += 1
+            print(f"scraped/error/progress: {self.scraped}/{self.err}/{self.progress}")
+            raise scrapy.exceptions.DropItem("Wrong location scraped.")
+
         latest_forecast_data = Forecast.query.filter_by(
-            city=city, update_time=update_time
+            location_id=location.id, update_time=update_time
         ).first()
         if latest_forecast_data:
+            self.err += 1
             self.progress += 1
-            print(self.progress)
+            print(f"scraped/error/progress: {self.scraped}/{self.err}/{self.progress}")
             raise scrapy.exceptions.DropItem("Already inserted this items.")
 
         else:
             clothes_city_list = item["clothes_info"][::2]
             clothes_index_list = item["clothes_info"][1::2]
-            area = item["area"]
-            prefecture = item["prefecture"]
 
             weather = item["weather"][0]
             highest_temp = int(item["highest_temp"][0][:-1])
@@ -100,22 +109,8 @@ class ForecastPipeline(object):
             i = clothes_city_list.index(city)
             clothes_index = clothes_index_list[i]
 
-            item["area"] = area
-            item["prefecture"] = prefecture
-            item["city"] = city
-            item["weather"] = weather
-            item["highest_temp"] = highest_temp
-            item["lowest_temp"] = lowest_temp
-            item["rain_chance"] = rain_chance
-            item["clothes_index"] = clothes_index
-            item["update_time"] = update_time
-            self.progress += 1
-            print(self.progress)
-
             forecast = Forecast(
-                area=area,
-                prefecture=prefecture,
-                city=city,
+                location_id=location.id,
                 weather=weather,
                 highest_temp=highest_temp,
                 lowest_temp=lowest_temp,
@@ -125,3 +120,7 @@ class ForecastPipeline(object):
             )
             db.session.add(forecast)
             db.session.commit()
+
+            self.scraped += 1
+            self.progress += 1
+            return f"scraped/error/progress: {self.scraped}/{self.err}/{self.progress}"

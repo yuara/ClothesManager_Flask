@@ -15,19 +15,22 @@
 {% include '_post.html' %}
 {% endfor %}
 {% endif %}
-{% if all_forecast %}
+{% if forecast %}
 <table class="table table-hover">
   <tr>
-    <th>{{ _('Prefecture') }}</th>
+    <th>{{ _('Update time') }}</th>
+    <th>{{ _('Location') }}</th>
+    <th>{{ _('Clothes Index') }}</th>
     <th>{{ _('Weather') }}</th>
     <th>{{ _('High / Low') }}</th>
     <th>{{ _('Chance of Rain') }}</th>
   </tr>
-  {% for forecast in all_forecast %}
   <tr>
+    <td>{{ forecast.update_time.isoformat(sep=' ', timespec='minutes') }}</td>
     <td>
-      {{ forecast.prefecture }}
+      {{ location.pref_name }} / {{ location.city_name }}
     </td>
+    <td>{{ forecast.clothes_index }}</td>
     <td>
       {{ forecast.weather }}
     </td>
@@ -35,10 +38,9 @@
       {{ forecast.highest_temp }} / {{ forecast.lowest_temp }}
     </td>
     <td>
-      {{ forecast.rain_chance }}
+      {{ forecast.rain_chance }} %
     </td>
   </tr>
-  {% endfor %}
 </table>
 <br><br>
 {% endif %}

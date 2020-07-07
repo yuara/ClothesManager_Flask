@@ -91,3 +91,17 @@ def scrape_forecast():
     result.addBoth(scrape_done)
 
     reactor.run()
+
+
+import crochet
+from scrapy.utils.log import configure_logging
+
+crochet.setup()
+
+
+@crochet.run_in_reactor
+def dev_scraping():
+    configure_logging({"LOG_FORMAT": "%(levelname)s: %(message)s"})
+
+    crawl_runner = CrawlerRunner(_get_spider_settings())
+    crawl_runner.crawl(ForecastSpider)

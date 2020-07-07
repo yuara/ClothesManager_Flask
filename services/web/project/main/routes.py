@@ -47,14 +47,23 @@ def index():
         db.session.commit()
         flash(_("Your post is now live!"))
         return redirect(url_for("main.index"))
+    user_location = Location.query.filter_by(id=current_user.location_id).first()
+
+    user_forecast = (
+        Forecast.query.filter_by(location_id=user_location.id)
+        .order_by(Forecast.update_time.desc())
+        .first()
+        if user_location
+        else None
+    )
     latest_post = current_user.posts.order_by(Post.timestamp.desc()).first()
-    all_forecast = Forecast.query.all()
     return render_template(
         "index.html",
         title=_("Home"),
         post_form=form,
         post=latest_post,
-        all_forecast=all_forecast,
+        location=user_location,
+        forecast=user_forecast,
     )
 
 
@@ -289,3 +298,13 @@ def scrape_forecast():
     if not next_page or url_parse(next_page).netloc != "":
         next_page = url_for("main.index")
     return redirect(next_page)
+
+
+from project.tasks import dev_scraping
+
+
+@bp.route("/test_scraping/")
+@login_required
+def test_scraping():
+    dev_scraping()
+    return redirect(url_for("main.index"))
