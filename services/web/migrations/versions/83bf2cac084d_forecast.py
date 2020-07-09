@@ -22,7 +22,7 @@ def upgrade():
         "forecast",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("location_id", sa.Integer(), nullable=True),
-        sa.Column("clothes_index", sa.Integer(), nullable=True),
+        sa.Column("clothes_index_id", sa.Integer(), nullable=True),
         sa.Column("weather", sa.String(length=30), nullable=True),
         sa.Column("highest_temp", sa.Integer(), nullable=True),
         sa.Column("lowest_temp", sa.Integer(), nullable=True),

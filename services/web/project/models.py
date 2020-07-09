@@ -96,6 +96,14 @@ clothes_outfits = db.Table(
     db.Column("clothes_id", db.Integer, db.ForeignKey("clothes.id")),
 )
 
+outfit_index = db.Table(
+    "outfit_index",
+    db.Column("clothes_index_id", db.Integer, db.ForeignKey("clothesindex.id")),
+    db.Column("outer_id", db.Integer, db.ForeignKey("category_id")),
+    db.Column("top_id", db.Integer, db.ForeignKey("category_id")),
+    db.Column("bottom_id", db.Integer, db.ForeignKey("category_id")),
+)
+
 
 class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
     __searchable__ = ["username"]
@@ -331,14 +339,6 @@ class Task(db.Model):
         return job.meta.get("progress", 0) if job is not None else 100
 
 
-class Shape(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20))
-
-    def __repr__(self):
-        return f"<Shape {self.name}>"
-
-
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     parent_id = db.Column(db.Integer, index=True)
@@ -362,7 +362,6 @@ class Clothes(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     owner_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     category_id = db.Column(db.Integer, index=True)
-    shape_id = db.Column(db.Integer, index=True)
 
     def __repr__(self):
         return f"<Clothes {self.name}>"
@@ -409,7 +408,7 @@ class Outfit(db.Model):
 class Forecast(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     location_id = db.Column(db.Integer, index=True)
-    clothes_index = db.Column(db.Integer)
+    clothes_index_id = db.Column(db.Integer)
     weather = db.Column(db.String(30), nullable=True)
     highest_temp = db.Column(db.Integer, nullable=True)
     lowest_temp = db.Column(db.Integer, nullable=True)
@@ -431,3 +430,15 @@ class Location(db.Model):
 
     def __repr__(self):
         return f"<Location {self.id}:{self.pref_name}/{self.city_name}>"
+
+
+class ClothesIndex(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.Integer)
+    description = db.Column(db.String(140))
+    outfit_categories = db.relationship(
+        "Category", secondary=outfit_index, backref="clothes_index", lazy="dynamic"
+    )
+
+    def __repr__(self):
+        return f"<ClothesIndex {self.id}:{self.value}>"

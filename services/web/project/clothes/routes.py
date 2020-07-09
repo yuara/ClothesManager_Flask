@@ -73,7 +73,6 @@ def add_clothes():
             name=form.name.data,
             note=form.note.data,
             category_id=form.child_category.data,
-            shape_id=form.shape.data,
             owner=current_user,
         )
         db.session.add(clothes)

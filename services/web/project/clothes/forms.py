@@ -3,7 +3,7 @@ from wtforms import StringField, TextAreaField, SelectField, SubmitField, Hidden
 from wtforms.validators import DataRequired, Length, InputRequired
 from flask_babel import lazy_gettext as _l
 from project import db
-from project.models import Clothes, Category, Shape
+from project.models import Clothes, Category
 
 
 class ClothesForm(FlaskForm):
@@ -13,7 +13,6 @@ class ClothesForm(FlaskForm):
     child_category = SelectField(
         "", coerce=int, validators=[DataRequired()], id="select_child"
     )
-    shape = SelectField(_l("Shape"), coerce=int, validators=[InputRequired()])
     note = TextAreaField(_l("Note"), validators=[Length(min=0, max=140)])
     submit = SubmitField(_l("Submit"))
 
@@ -27,7 +26,6 @@ class ClothesForm(FlaskForm):
         self.child_category.choices = db.session.query(
             Category.id, Category.child_name
         ).all()
-        self.shape.choices = [(x.id, x.name) for x in Shape.query.all()]
 
 
 class OutfitForm(FlaskForm):
