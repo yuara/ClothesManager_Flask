@@ -1,26 +1,41 @@
 [{
   "parent_id": 1,
-  "parent_name": "tops",
+  "parent_name": "Jackets",
   "child_id": 1,
-  "child_name": "t-shirts"
+  "child_name": "Downjacket"
 }, {
   "parent_id": 1,
-  "parent_name": "tops",
+  "parent_name": "Jackets",
   "child_id": 2,
-  "child_name": "shirts"
+  "child_name": "Windbreaker"
 }, {
   "parent_id": 1,
-  "parent_name": "tops",
+  "parent_name": "Jackets",
   "child_id": 3,
-  "child_name": "hoodie"
+  "child_name": "Coat"
 }, {
   "parent_id": 2,
-  "parent_name": "bottoms",
+  "parent_name": "Tops",
   "child_id": 1,
-  "child_name": "pants"
+  "child_name": "T-shirts"
 }, {
   "parent_id": 2,
-  "parent_name": "bottoms",
+  "parent_name": "Tops",
   "child_id": 2,
-  "child_name": "skirt"
+  "child_name": "Shirts"
+}, {
+  "parent_id": 2,
+  "parent_name": "Tops",
+  "child_id": 3,
+  "child_name": "Hoodie"
+}, {
+  "parent_id": 3,
+  "parent_name": "Bottoms",
+  "child_id": 1,
+  "child_name": "Pants"
+}, {
+  "parent_id": 3,
+  "parent_name": "Bottoms",
+  "child_id": 2,
+  "child_name": "Skirt"
 }]

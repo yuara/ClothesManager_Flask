@@ -1,0 +1,28 @@
+[{
+  "value": 10
+}, {
+  "value": 20
+}, {
+  "value": 30
+}, {
+  "value": 40,
+  "description": "裏地付きトレンチコートがおすすめ。"
+}, {
+  "value": 50,
+  "description": "薄手のジャケットを羽織ろう。"
+}, {
+  "value": 60,
+  "description": "長袖シャツ・カットソーで快適に。"
+}, {
+  "value": 70,
+  "description": "半袖 + カーディガンで温度調節を。"
+}, {
+  "value": 80,
+  "description": "半袖Tシャツ一枚で過ごせる暑さ"
+}, {
+  "value": 90,
+  "description": "ノースリーブでもかなり暑い。"
+}, {
+  "value": 100,
+  "description": "暑さ対策必須！何を着ていても暑い。"
+}]

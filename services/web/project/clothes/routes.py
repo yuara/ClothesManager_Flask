@@ -69,8 +69,13 @@ def add_clothes():
             "clothes/add_clothes.html", title=_("Add clothes"), form=form
         )
     if form.validate_on_submit() and request.form["form_name"] == "ClothesForm":
+        if form.name.data:
+            _name = form.name.data
+        else:
+            _count = current_user.own_clothes.count() + 1
+            _name = f"Clothes {_count}"
         clothes = Clothes(
-            name=form.name.data,
+            name=_name,
             note=form.note.data,
             category_id=form.child_category.data,
             owner=current_user,
@@ -84,6 +89,7 @@ def add_clothes():
 @bp.route("/outfits/")
 @login_required
 def outfits():
+    user_clothes = current_user.own_clothes.all()
     page = request.args.get("page", 1, type=int)
     user_outfits = current_user.outfits.order_by(Outfit.timestamp.desc()).paginate(
         page, current_app.config["POSTS_PER_PAGE"], False
@@ -100,7 +106,8 @@ def outfits():
     )
     return render_template(
         "clothes/outfits.html",
-        outfits=user_outfits.items,
+        user_outfits=user_outfits.items,
+        user_clothes=user_clothes,
         next_url=next_url,
         prev_url=prev_url,
     )
@@ -111,10 +118,24 @@ def outfits():
 def set_outfit():
     form = OutfitForm()
     if form.validate_on_submit():
-        outfit = Outfit(name=form.name.data, note=form.note.data, owner=current_user)
+        if form.name.data:
+            _name = form.name.data
+        else:
+            _count = current_user.outfits.count() + 1
+            _name = f"Outfit {_count}"
+        if form.jackets.data == 0:
+            _jacket = None
+        else:
+            _jacket = form.jackets.data
+        outfit = Outfit(
+            name=_name,
+            note=form.note.data,
+            owner_id=current_user.id,
+            jacket_id=_jacket,
+            top_id=form.tops.data,
+            bottom_id=form.bottoms.data,
+        )
         db.session.add(outfit)
-        outfit.put_clothes(Clothes.query.get(form.tops.data))
-        outfit.put_clothes(Clothes.query.get(form.bottoms.data))
         db.session.commit()
         flash(_("You set your outfit!!"))
         return redirect(url_for("clothes.outfits"))

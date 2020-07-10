@@ -6,28 +6,48 @@
 
 <table class="table table-hover">
   <tr>
-    <th></th>
     <th>{{ _('Outfit Name') }}</th>
+    <th>{{ _('Jackets') }}</th>
     <th>{{ _('Tops') }}</th>
     <th>{{ _('Bottoms') }}</th>
     <th>{{ _('Settime') }}</th>
   </tr>
-  {% for post in outfits %}
+  {% for outfit in user_outfits %}
   <tr>
-    <td width="70px">
-      <a href="{{ url_for('main.user', username=post.owner.username) }}">
-        <img src="{{ post.owner.avatar(70) }}">
-      </a>
+    <td>{{ outfit.name }}</td>
+
+    <td>
+      {% if outfit.jacket_id %}
+      {% for clothes in user_clothes %}
+      {% if clothes.id == outfit.jacket_id %}
+      {{ clothes.id }}
+      {% endif %}
+      {% endfor %}
+      {% else %}
+      {% endif %}
     </td>
     <td>
-      <span id="post{{ post.id }}">{{ post.name }}</span>
+      {% if outfit.top_id %}
+      {% for clothes in user_clothes %}
+      {% if clothes.id == outfit.top_id %}
+      {{ clothes.id }}
+      {% endif %}
+      {% endfor %}
+      {% else %}
+      {% endif %}
     </td>
-    {% for clothes in post.set_clothes %}
     <td>
-      {{ clothes.name }}
+      {% if outfit.bottom_id %}
+      {% for clothes in user_clothes %}
+      {% if clothes.id == outfit.bottom_id %}
+      {{ clothes.id }}
+      {% endif %}
+      {% endfor %}
+      {% else %}
+      {% endif %}
     </td>
-    {% endfor %}
-    <td>{{ _('%(when)s', when=moment(post.timestamp).fromNow()) }}</td>
+
+    <td>{{ _('%(when)s', when=moment(outfit.timestamp).fromNow()) }}</td>
   </tr>
   {% endfor %}
 </table>

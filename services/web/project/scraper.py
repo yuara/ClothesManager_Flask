@@ -5,7 +5,7 @@ import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 from project import create_app, db
-from project.models import Forecast, Location
+from project.models import Forecast, Location, ClothesIndex
 
 
 class ForecastItem(scrapy.Item):
@@ -60,7 +60,7 @@ class ForecastPipeline(object):
         app = create_app()
         app.app_context().push()
         self.progress = 0
-        self.scraped = 0
+        self.sccess = 0
         self.err = 0
 
     def process_item(self, item, spider):
@@ -81,8 +81,8 @@ class ForecastPipeline(object):
         if location is None:
             self.err += 1
             self.progress += 1
-            print(f"scraped/error/progress: {self.scraped}/{self.err}/{self.progress}")
-            raise scrapy.exceptions.DropItem("Wrong location scraped.")
+            print(f"sccess/error/progress: {self.sccess}/{self.err}/{self.progress}")
+            raise scrapy.exceptions.DropItem("Invalid location.")
 
         latest_forecast_data = Forecast.query.filter_by(
             location_id=location.id, update_time=update_time
@@ -90,7 +90,7 @@ class ForecastPipeline(object):
         if latest_forecast_data:
             self.err += 1
             self.progress += 1
-            print(f"scraped/error/progress: {self.scraped}/{self.err}/{self.progress}")
+            print(f"sccess/error/progress: {self.sccess}/{self.err}/{self.progress}")
             raise scrapy.exceptions.DropItem("Already inserted this items.")
 
         else:
@@ -107,7 +107,17 @@ class ForecastPipeline(object):
             )
 
             i = clothes_city_list.index(city)
-            clothes_index = clothes_index_list[i]
+            index = clothes_index_list[i]
+            clothes_index = ClothesIndex.query.filter_by(value=index).first()
+            if clothes_index is None:
+                self.err += 1
+                self.progress += 1
+                print(
+                    f"sccess/error/progress: {self.sccess}/{self.err}/{self.progress}"
+                )
+                raise scrapy.exceptions.DropItem("Invalid clothes index")
+
+            clothes_index_id = clothes_index.id
 
             forecast = Forecast(
                 location_id=location.id,
@@ -115,12 +125,12 @@ class ForecastPipeline(object):
                 highest_temp=highest_temp,
                 lowest_temp=lowest_temp,
                 rain_chance=rain_chance,
-                clothes_index=clothes_index,
+                clothes_index_id=clothes_index_id,
                 update_time=update_time,
             )
             db.session.add(forecast)
             db.session.commit()
 
-            self.scraped += 1
+            self.sccess += 1
             self.progress += 1
-            return f"scraped/error/progress: {self.scraped}/{self.err}/{self.progress}"
+            return f"scraped/error/progress: {self.sccess}/{self.err}/{self.progress}"

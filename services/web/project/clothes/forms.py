@@ -29,7 +29,8 @@ class ClothesForm(FlaskForm):
 
 
 class OutfitForm(FlaskForm):
-    name = StringField(_l("Name"), validators=[Length(min=1, max=30)])
+    name = StringField(_l("Name"), validators=[Length(min=0, max=30)])
+    jackets = SelectField(_l("Jackets"), coerce=int, default=0)
     tops = SelectField(_l("Tops"), coerce=int, validators=[DataRequired()])
     bottoms = SelectField(_l("Bottoms"), coerce=int, validators=[DataRequired()])
     note = TextAreaField(_l("Note"), validators=[Length(min=0, max=140)])
@@ -38,9 +39,14 @@ class OutfitForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         super(OutfitForm, self).__init__(*args, **kwargs)
 
-        tops_list = Category.get_id_by_parent_id(1)
-        bottoms_list = Category.get_id_by_parent_id(2)
+        jackets_list = Category.get_id_by_parent_id(1)
+        tops_list = Category.get_id_by_parent_id(2)
+        bottoms_list = Category.get_id_by_parent_id(3)
 
+        self.jackets.choices = [
+            (x.id, x.name) for x in Clothes.get_clothes_by_categoris(jackets_list)
+        ]
+        self.jackets.choices.insert(0, (0, "None"))
         self.tops.choices = [
             (x.id, x.name) for x in Clothes.get_clothes_by_categoris(tops_list)
         ]
