@@ -1,0 +1,268 @@
+[{
+  "clothes_index_id": 1,
+  "category_id": 1
+}, {
+  "clothes_index_id": 1,
+  "category_id": 2
+}, {
+  "clothes_index_id": 1,
+  "category_id": 14
+}, {
+  "clothes_index_id": 1,
+  "category_id": 15
+}, {
+  "clothes_index_id": 1,
+  "category_id": 16
+}, {
+  "clothes_index_id": 1,
+  "category_id": 17
+}, {
+  "clothes_index_id": 1,
+  "category_id": 18
+}, {
+  "clothes_index_id": 1,
+  "category_id": 19
+}, {
+  "clothes_index_id": 2,
+  "category_id": 1
+}, {
+  "clothes_index_id": 2,
+  "category_id": 2
+}, {
+  "clothes_index_id": 2,
+  "category_id": 3
+}, {
+  "clothes_index_id": 2,
+  "category_id": 14
+}, {
+  "clothes_index_id": 2,
+  "category_id": 15
+}, {
+  "clothes_index_id": 2,
+  "category_id": 16
+}, {
+  "clothes_index_id": 2,
+  "category_id": 17
+}, {
+  "clothes_index_id": 2,
+  "category_id": 18
+}, {
+  "clothes_index_id": 2,
+  "category_id": 19
+}, {
+  "clothes_index_id": 3,
+  "category_id": 3
+}, {
+  "clothes_index_id": 3,
+  "category_id": 13
+}, {
+  "clothes_index_id": 3,
+  "category_id": 14
+}, {
+  "clothes_index_id": 3,
+  "category_id": 15
+}, {
+  "clothes_index_id": 3,
+  "category_id": 16
+}, {
+  "clothes_index_id": 3,
+  "category_id": 17
+}, {
+  "clothes_index_id": 3,
+  "category_id": 18
+}, {
+  "clothes_index_id": 3,
+  "category_id": 19
+}, {
+  "clothes_index_id": 4,
+  "category_id": 3
+}, {
+  "clothes_index_id": 4,
+  "category_id": 4
+}, {
+  "clothes_index_id": 4,
+  "category_id": 13
+}, {
+  "clothes_index_id": 4,
+  "category_id": 14
+}, {
+  "clothes_index_id": 4,
+  "category_id": 15
+}, {
+  "clothes_index_id": 4,
+  "category_id": 16
+}, {
+  "clothes_index_id": 4,
+  "category_id": 17
+}, {
+  "clothes_index_id": 4,
+  "category_id": 18
+}, {
+  "clothes_index_id": 4,
+  "category_id": 19
+}, {
+  "clothes_index_id": 5,
+  "category_id": 4
+}, {
+  "clothes_index_id": 5,
+  "category_id": 5
+}, {
+  "clothes_index_id": 5,
+  "category_id": 6
+}, {
+  "clothes_index_id": 5,
+  "category_id": 7
+}, {
+  "clothes_index_id": 5,
+  "category_id": 8
+}, {
+  "clothes_index_id": 5,
+  "category_id": 13
+}, {
+  "clothes_index_id": 5,
+  "category_id": 14
+}, {
+  "clothes_index_id": 5,
+  "category_id": 15
+}, {
+  "clothes_index_id": 5,
+  "category_id": 18
+}, {
+  "clothes_index_id": 5,
+  "category_id": 19
+}, {
+  "clothes_index_id": 6,
+  "category_id": 5
+}, {
+  "clothes_index_id": 6,
+  "category_id": 6
+}, {
+  "clothes_index_id": 6,
+  "category_id": 7
+}, {
+  "clothes_index_id": 6,
+  "category_id": 8
+}, {
+  "clothes_index_id": 6,
+  "category_id": 13
+}, {
+  "clothes_index_id": 6,
+  "category_id": 14
+}, {
+  "clothes_index_id": 6,
+  "category_id": 15
+}, {
+  "clothes_index_id": 6,
+  "category_id": 18
+}, {
+  "clothes_index_id": 6,
+  "category_id": 19
+}, {
+  "clothes_index_id": 7,
+  "category_id": 5
+}, {
+  "clothes_index_id": 7,
+  "category_id": 6
+}, {
+  "clothes_index_id": 7,
+  "category_id": 7
+}, {
+  "clothes_index_id": 7,
+  "category_id": 8
+}, {
+  "clothes_index_id": 7,
+  "category_id": 12
+}, {
+  "clothes_index_id": 7,
+  "category_id": 13
+}, {
+  "clothes_index_id": 7,
+  "category_id": 18
+}, {
+  "clothes_index_id": 7,
+  "category_id": 19
+}, {
+  "clothes_index_id": 7,
+  "category_id": 20
+}, {
+  "clothes_index_id": 7,
+  "category_id": 21
+}, {
+  "clothes_index_id": 8,
+  "category_id": 12
+}, {
+  "clothes_index_id": 8,
+  "category_id": 13
+}, {
+  "clothes_index_id": 8,
+  "category_id": 18
+}, {
+  "clothes_index_id": 8,
+  "category_id": 19
+}, {
+  "clothes_index_id": 8,
+  "category_id": 20
+}, {
+  "clothes_index_id": 8,
+  "category_id": 21
+}, {
+  "clothes_index_id": 9,
+  "category_id": 9
+}, {
+  "clothes_index_id": 9,
+  "category_id": 10
+}, {
+  "clothes_index_id": 9,
+  "category_id": 11
+}, {
+  "clothes_index_id": 9,
+  "category_id": 12
+}, {
+  "clothes_index_id": 9,
+  "category_id": 13
+}, {
+  "clothes_index_id": 9,
+  "category_id": 18
+}, {
+  "clothes_index_id": 9,
+  "category_id": 19
+}, {
+  "clothes_index_id": 9,
+  "category_id": 20
+}, {
+  "clothes_index_id": 9,
+  "category_id": 21
+}, {
+  "clothes_index_id": 9,
+  "category_id": 22
+}, {
+  "clothes_index_id": 10,
+  "category_id": 9
+}, {
+  "clothes_index_id": 10,
+  "category_id": 10
+}, {
+  "clothes_index_id": 10,
+  "category_id": 11
+}, {
+  "clothes_index_id": 10,
+  "category_id": 12
+}, {
+  "clothes_index_id": 10,
+  "category_id": 13
+}, {
+  "clothes_index_id": 10,
+  "category_id": 18
+}, {
+  "clothes_index_id": 10,
+  "category_id": 19
+}, {
+  "clothes_index_id": 10,
+  "category_id": 20
+}, {
+  "clothes_index_id": 10,
+  "category_id": 21
+}, {
+  "clothes_index_id": 10,
+  "category_id": 22
+}]

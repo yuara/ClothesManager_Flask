@@ -96,6 +96,12 @@ category_index = db.Table(
     db.Column("category_id", db.Integer, db.ForeignKey("category.id")),
 )
 
+category_condition = db.Table(
+    "category_condition",
+    db.Column("clothes_index_id", db.Integer, db.ForeignKey("clothes_index.id")),
+    db.Column("category_id", db.Integer, db.ForeignKey("category.id")),
+)
+
 
 class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
     __searchable__ = ["username"]
@@ -337,17 +343,9 @@ class Category(db.Model):
     child_id = db.Column(db.Integer, index=True)
     parent_name = db.Column(db.String(30))
     child_name = db.Column(db.String(30))
-    category_indexes = db.relationship(
-        "ClothesIndex", secondary=category_index, backref="categories", lazy="dynamic"
-    )
 
     def __repr__(self):
         return f"<Category {self.id}:{self.parent_name}-{self.child_name}>"
-
-    @classmethod
-    def get_id_by_parent_id(self, parent_id):
-        categories = self.query.filter_by(parent_id=parent_id).all()
-        return [cate.id for cate in categories]
 
 
 class Clothes(db.Model):
@@ -361,16 +359,6 @@ class Clothes(db.Model):
     def __repr__(self):
         return f"<Clothes {self.id}:{self.name}>"
 
-    @classmethod
-    def get_clothes_by_categoris(self, category_list):
-        clothes_list = []
-        for category_id in category_list:
-            clothes = self.query.filter(
-                self.owner_id == current_user.id, self.category_id == category_id
-            ).all()
-            clothes_list += clothes
-        return clothes_list
-
 
 class Outfit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -379,11 +367,13 @@ class Outfit(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     jacket_id = db.Column(db.Integer, db.ForeignKey("clothes.id"))
-    top_id = db.Column(db.Integer, db.ForeignKey("clothes.id"))
+    top_1_id = db.Column(db.Integer, db.ForeignKey("clothes.id"))
+    top_2_id = db.Column(db.Integer, db.ForeignKey("clothes.id"))
     bottom_id = db.Column(db.Integer, db.ForeignKey("clothes.id"))
 
     jacket = db.relationship("Clothes", foreign_keys="Outfit.jacket_id")
-    top = db.relationship("Clothes", foreign_keys="Outfit.top_id")
+    top_1 = db.relationship("Clothes", foreign_keys="Outfit.top_1_id")
+    top_2 = db.relationship("Clothes", foreign_keys="Outfit.top_2_id")
     bottom = db.relationship("Clothes", foreign_keys="Outfit.bottom_id")
 
     def __repr__(self):
@@ -423,6 +413,12 @@ class ClothesIndex(db.Model):
     description = db.Column(db.String(140))
     categories = db.relationship(
         "Category", secondary=category_index, backref="category_indexes", lazy="dynamic"
+    )
+    conditions = db.relationship(
+        "Category",
+        secondary=category_condition,
+        backref="condition_indexes",
+        lazy="dynamic",
     )
 
     def __repr__(self):

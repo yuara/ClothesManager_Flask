@@ -1,33 +1,88 @@
 [{
   "parent_id": 1,
-  "parent_name": "Jackets",
+  "parent_name": "Outerwears",
   "child_id": 1,
-  "child_name": "Downjacket"
+  "child_name": "Down"
 }, {
   "parent_id": 1,
-  "parent_name": "Jackets",
+  "parent_name": "Outerwears",
   "child_id": 2,
-  "child_name": "Windbreaker"
+  "child_name": "Insulated"
 }, {
   "parent_id": 1,
-  "parent_name": "Jackets",
+  "parent_name": "Outerwears",
   "child_id": 3,
-  "child_name": "Coat"
+  "child_name": "Overcoat"
+}, {
+  "parent_id": 1,
+  "parent_name": "Outerwears",
+  "child_id": 4,
+  "child_name": "Trenchcoat"
+}, {
+  "parent_id": 1,
+  "parent_name": "Outerwears",
+  "child_id": 5,
+  "child_name": "Rainwear"
+}, {
+  "parent_id": 1,
+  "parent_name": "Outerwears",
+  "child_id": 6,
+  "child_name": "Vests"
+}, {
+  "parent_id": 1,
+  "parent_name": "Outerwears",
+  "child_id": 7,
+  "child_name": "Cardigans"
+}, {
+  "parent_id": 1,
+  "parent_name": "Outerwears",
+  "child_id": 8,
+  "child_name": "Blazers"
 }, {
   "parent_id": 2,
   "parent_name": "Tops",
   "child_id": 1,
-  "child_name": "T-shirts"
+  "child_name": "Off the Shoulder Tops"
 }, {
   "parent_id": 2,
   "parent_name": "Tops",
   "child_id": 2,
-  "child_name": "Shirts"
+  "child_name": "Tanks"
 }, {
   "parent_id": 2,
   "parent_name": "Tops",
   "child_id": 3,
-  "child_name": "Hoodie"
+  "child_name": "Cropped"
+}, {
+  "parent_id": 2,
+  "parent_name": "Tops",
+  "child_id": 4,
+  "child_name": "Short Sleeves Tops"
+}, {
+  "parent_id": 2,
+  "parent_name": "Tops",
+  "child_id": 5,
+  "child_name": "Long Sleeves Tops"
+}, {
+  "parent_id": 2,
+  "parent_name": "Tops",
+  "child_id": 6,
+  "child_name": "Hoodies"
+}, {
+  "parent_id": 2,
+  "parent_name": "Tops",
+  "child_id": 7,
+  "child_name": "Sweats"
+}, {
+  "parent_id": 2,
+  "parent_name": "Tops",
+  "child_id": 8,
+  "child_name": "Knitwear"
+}, {
+  "parent_id": 2,
+  "parent_name": "Tops",
+  "child_id": 9,
+  "child_name": "Fleece"
 }, {
   "parent_id": 3,
   "parent_name": "Bottoms",
@@ -37,5 +92,20 @@
   "parent_id": 3,
   "parent_name": "Bottoms",
   "child_id": 2,
-  "child_name": "Skirt"
+  "child_name": "Jeans"
+}, {
+  "parent_id": 3,
+  "parent_name": "Bottoms",
+  "child_id": 3,
+  "child_name": "Leggings"
+}, {
+  "parent_id": 3,
+  "parent_name": "Bottoms",
+  "child_id": 4,
+  "child_name": "Skirts"
+}, {
+  "parent_id": 3,
+  "parent_name": "Bottoms",
+  "child_id": 5,
+  "child_name": "Shorts"
 }]

@@ -19,7 +19,16 @@ from project.main.forms import (
     SearchForm,
     MessagesForm,
 )
-from project.models import User, Post, Message, Notification, Forecast, Location
+from project.models import (
+    User,
+    Post,
+    Message,
+    Notification,
+    Forecast,
+    Location,
+    ClothesIndex,
+)
+from project.suggest import suggest
 from project.translate import translate
 from project.main import bp
 
@@ -47,23 +56,26 @@ def index():
         db.session.commit()
         flash(_("Your post is now live!"))
         return redirect(url_for("main.index"))
-    user_location = Location.query.filter_by(id=current_user.location_id).first()
-
     user_forecast = (
-        Forecast.query.filter_by(location_id=user_location.id)
+        db.session.query(
+            Forecast, Location.pref_name, Location.city_name, ClothesIndex.value
+        )
+        .join(Location, Location.id == Forecast.location_id)
+        .join(ClothesIndex, ClothesIndex.id == Forecast.clothes_index_id)
+        .join(User, User.location_id == Location.id)
+        .filter(User.id == current_user.id)
         .order_by(Forecast.update_time.desc())
         .first()
-        if user_location
-        else None
     )
     latest_post = current_user.posts.order_by(Post.timestamp.desc()).first()
+    suggestions = suggest()
     return render_template(
         "index.html",
         title=_("Home"),
         post_form=form,
         post=latest_post,
-        location=user_location,
         forecast=user_forecast,
+        suggestions=suggestions,
     )
 
 

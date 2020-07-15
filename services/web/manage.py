@@ -10,6 +10,8 @@ from project.models import (
     Outfit,
     Forecast,
     Location,
+    ClothesIndex,
+    category_index,
 )
 
 app = create_app()
@@ -30,4 +32,6 @@ def make_shell_content():
         "Outfit": Outfit,
         "Forecast": Forecast,
         "Location": Location,
+        "ClothesIndex": ClothesIndex,
+        "category_index": category_index,
     }

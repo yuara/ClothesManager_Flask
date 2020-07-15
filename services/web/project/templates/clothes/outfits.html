@@ -8,46 +8,45 @@
   <tr>
     <th>{{ _('Outfit Name') }}</th>
     <th>{{ _('Jackets') }}</th>
-    <th>{{ _('Tops') }}</th>
+    <th>{{ _('Tops 1') }}</th>
+    <th>{{ _('Tops 2') }}</th>
     <th>{{ _('Bottoms') }}</th>
     <th>{{ _('Settime') }}</th>
   </tr>
-  {% for outfit in user_outfits %}
+  {% for name, time, jacket, top_1, top_2, bottom in user_outfits %}
   <tr>
-    <td>{{ outfit.name }}</td>
+    <td>{{ name }}</td>
 
     <td>
-      {% if outfit.jacket_id %}
-      {% for clothes in user_clothes %}
-      {% if clothes.id == outfit.jacket_id %}
-      {{ clothes.id }}
-      {% endif %}
-      {% endfor %}
+      {% if jacket %}
+      {{ jacket }}
       {% else %}
+      ----------
       {% endif %}
     </td>
     <td>
-      {% if outfit.top_id %}
-      {% for clothes in user_clothes %}
-      {% if clothes.id == outfit.top_id %}
-      {{ clothes.id }}
-      {% endif %}
-      {% endfor %}
+      {% if top_1 %}
+      {{ top_1 }}
       {% else %}
+      ----------
       {% endif %}
     </td>
     <td>
-      {% if outfit.bottom_id %}
-      {% for clothes in user_clothes %}
-      {% if clothes.id == outfit.bottom_id %}
-      {{ clothes.id }}
-      {% endif %}
-      {% endfor %}
+      {% if top_2 %}
+      {{ top_2 }}
       {% else %}
+      ----------
+      {% endif %}
+    </td>
+    <td>
+      {% if bottom %}
+      {{ bottom }}
+      {% else %}
+      ----------
       {% endif %}
     </td>
 
-    <td>{{ _('%(when)s', when=moment(outfit.timestamp).fromNow()) }}</td>
+    <td>{{ moment(time).fromNow() }}</td>
   </tr>
   {% endfor %}
 </table>

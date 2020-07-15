@@ -90,7 +90,7 @@ class ForecastPipeline(object):
         if latest_forecast_data:
             self.err += 1
             self.progress += 1
-            print(f"sccess/error/progress: {self.sccess}/{self.err}/{self.progress}")
+            print(f"success/error/progress: {self.sccess}/{self.err}/{self.progress}")
             raise scrapy.exceptions.DropItem("Already inserted this items.")
 
         else:
@@ -113,7 +113,7 @@ class ForecastPipeline(object):
                 self.err += 1
                 self.progress += 1
                 print(
-                    f"sccess/error/progress: {self.sccess}/{self.err}/{self.progress}"
+                    f"success/error/progress: {self.sccess}/{self.err}/{self.progress}"
                 )
                 raise scrapy.exceptions.DropItem("Invalid clothes index")
 
@@ -133,4 +133,4 @@ class ForecastPipeline(object):
 
             self.sccess += 1
             self.progress += 1
-            return f"scraped/error/progress: {self.sccess}/{self.err}/{self.progress}"
+            return f"success/error/progress: {self.sccess}/{self.err}/{self.progress}"

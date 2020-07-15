@@ -2,8 +2,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SelectField, SubmitField, HiddenField
 from wtforms.validators import DataRequired, Length, InputRequired
 from flask_babel import lazy_gettext as _l
+from flask_login import current_user
 from project import db
-from project.models import Clothes, Category
+from project.models import User, Clothes, Category
 
 
 class ClothesForm(FlaskForm):
@@ -31,7 +32,8 @@ class ClothesForm(FlaskForm):
 class OutfitForm(FlaskForm):
     name = StringField(_l("Name"), validators=[Length(min=0, max=30)])
     jackets = SelectField(_l("Jackets"), coerce=int, default=0)
-    tops = SelectField(_l("Tops"), coerce=int, validators=[DataRequired()])
+    tops_1 = SelectField(_l("Tops 1"), coerce=int, validators=[DataRequired()])
+    tops_2 = SelectField(_l("Tops 2"), coerce=int, default=0)
     bottoms = SelectField(_l("Bottoms"), coerce=int, validators=[DataRequired()])
     note = TextAreaField(_l("Note"), validators=[Length(min=0, max=140)])
     submit = SubmitField("Submit")
@@ -39,17 +41,40 @@ class OutfitForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         super(OutfitForm, self).__init__(*args, **kwargs)
 
-        jackets_list = Category.get_id_by_parent_id(1)
-        tops_list = Category.get_id_by_parent_id(2)
-        bottoms_list = Category.get_id_by_parent_id(3)
-
         self.jackets.choices = [
-            (x.id, x.name) for x in Clothes.get_clothes_by_categoris(jackets_list)
+            (x.id, x.name)
+            for x in Clothes.query.join(User, User.id == Clothes.owner_id)
+            .join(Category, Category.id == Clothes.category_id)
+            .filter(User.id == current_user.id)
+            .filter(Category.parent_name == "Outerwears")
+            .all()
         ]
         self.jackets.choices.insert(0, (0, "None"))
-        self.tops.choices = [
-            (x.id, x.name) for x in Clothes.get_clothes_by_categoris(tops_list)
+
+        self.tops_1.choices = [
+            (x.id, x.name)
+            for x in Clothes.query.join(User, User.id == Clothes.owner_id)
+            .join(Category, Category.id == Clothes.category_id)
+            .filter(User.id == current_user.id)
+            .filter(Category.parent_name == "Tops")
+            .all()
         ]
+
+        self.tops_2.choices = [
+            (x.id, x.name)
+            for x in Clothes.query.join(User, User.id == Clothes.owner_id)
+            .join(Category, Category.id == Clothes.category_id)
+            .filter(User.id == current_user.id)
+            .filter(Category.parent_name == "Tops")
+            .all()
+        ]
+        self.tops_2.choices.insert(0, (0, "None"))
+
         self.bottoms.choices = [
-            (x.id, x.name) for x in Clothes.get_clothes_by_categoris(bottoms_list)
+            (x.id, x.name)
+            for x in Clothes.query.join(User, User.id == Clothes.owner_id)
+            .join(Category, Category.id == Clothes.category_id)
+            .filter(User.id == current_user.id)
+            .filter(Category.parent_name == "Bottoms")
+            .all()
         ]
