@@ -24,6 +24,7 @@ from project.models import (
     Post,
     Message,
     Notification,
+    Category,
     Forecast,
     Location,
     ClothesIndex,
@@ -40,6 +41,11 @@ def before_request():
         db.session.commit()
         g.search_form = SearchForm()
     g.locale = str(get_locale())
+
+
+@bp.route("/home")
+def home():
+    return render_template("home.html")
 
 
 @bp.route("/", methods=["GET", "POST"])
@@ -68,14 +74,20 @@ def index():
         .first()
     )
     latest_post = current_user.posts.order_by(Post.timestamp.desc()).first()
-    suggestions = suggest()
+    suggestions = suggest(user_forecast.Forecast.clothes_index_id)
+    outwears = suggestions.filter(Category.parent_id == 1).all()
+    tops = suggestions.filter(Category.parent_id == 2).all()
+    bottoms = suggestions.filter(Category.parent_id == 3).all()
+
     return render_template(
         "index.html",
         title=_("Home"),
         post_form=form,
         post=latest_post,
         forecast=user_forecast,
-        suggestions=suggestions,
+        outwears=outwears,
+        tops=tops,
+        bottoms=bottoms,
     )
 
 
@@ -97,9 +109,19 @@ def explore():
     )
 
 
-@bp.route("/user/<username>/")
+@bp.route("/user/<username>/", methods=["GET", "POST"])
 @login_required
 def user(username):
+    form = PostForm()
+    if form.validate_on_submit():
+        language = guess_language(form.post.data)
+        if language == "UNKNOWN" or len(language) > 5:
+            language = ""
+        post = Post(body=form.post.data, author=current_user, language=language)
+        db.session.add(post)
+        db.session.commit()
+        flash(_("Your post is now live!"))
+        return redirect(url_for("main.user", username=current_user.username))
     user = User.query.filter_by(username=username).first_or_404()
     location = Location.query.filter_by(id=user.location_id).first()
     page = request.args.get("page", 1, type=int)
@@ -119,6 +141,7 @@ def user(username):
     return render_template(
         "user.html",
         user=user,
+        form=form,
         location=location,
         posts=posts.items,
         next_url=next_url,

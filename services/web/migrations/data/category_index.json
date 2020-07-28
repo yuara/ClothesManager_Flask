@@ -1,268 +1,357 @@
 [{
   "clothes_index_id": 1,
-  "category_id": 1
+  "category_id": 1,
+  "conditional": 0
 }, {
   "clothes_index_id": 1,
-  "category_id": 2
+  "category_id": 2,
+  "conditional": 0
 }, {
   "clothes_index_id": 1,
-  "category_id": 14
+  "category_id": 14,
+  "conditional": 0
 }, {
   "clothes_index_id": 1,
-  "category_id": 15
+  "category_id": 15,
+  "conditional": 0
 }, {
   "clothes_index_id": 1,
-  "category_id": 16
+  "category_id": 16,
+  "conditional": 0
 }, {
   "clothes_index_id": 1,
-  "category_id": 17
+  "category_id": 17,
+  "conditional": 0
 }, {
   "clothes_index_id": 1,
-  "category_id": 18
+  "category_id": 18,
+  "conditional": 0
 }, {
   "clothes_index_id": 1,
-  "category_id": 19
+  "category_id": 19,
+  "conditional": 0
 }, {
   "clothes_index_id": 2,
-  "category_id": 1
+  "category_id": 1,
+  "conditional": 0
 }, {
   "clothes_index_id": 2,
-  "category_id": 2
+  "category_id": 2,
+  "conditional": 0
 }, {
   "clothes_index_id": 2,
-  "category_id": 3
+  "category_id": 3,
+  "conditional": 0
 }, {
   "clothes_index_id": 2,
-  "category_id": 14
+  "category_id": 14,
+  "conditional": 0
 }, {
   "clothes_index_id": 2,
-  "category_id": 15
+  "category_id": 15,
+  "conditional": 0
 }, {
   "clothes_index_id": 2,
-  "category_id": 16
+  "category_id": 16,
+  "conditional": 0
 }, {
   "clothes_index_id": 2,
-  "category_id": 17
+  "category_id": 17,
+  "conditional": 0
 }, {
   "clothes_index_id": 2,
-  "category_id": 18
+  "category_id": 18,
+  "conditional": 0
 }, {
   "clothes_index_id": 2,
-  "category_id": 19
+  "category_id": 19,
+  "conditional": 0
 }, {
   "clothes_index_id": 3,
-  "category_id": 3
+  "category_id": 3,
+  "conditional": 0
 }, {
   "clothes_index_id": 3,
-  "category_id": 13
+  "category_id": 13,
+  "conditional": 1
 }, {
   "clothes_index_id": 3,
-  "category_id": 14
+  "category_id": 14,
+  "conditional": 1
 }, {
   "clothes_index_id": 3,
-  "category_id": 15
+  "category_id": 15,
+  "conditional": 1
 }, {
   "clothes_index_id": 3,
-  "category_id": 16
+  "category_id": 16,
+  "conditional": 0
 }, {
   "clothes_index_id": 3,
-  "category_id": 17
+  "category_id": 17,
+  "conditional": 0
 }, {
   "clothes_index_id": 3,
-  "category_id": 18
+  "category_id": 18,
+  "conditional": 0
 }, {
   "clothes_index_id": 3,
-  "category_id": 19
+  "category_id": 19,
+  "conditional": 0
 }, {
   "clothes_index_id": 4,
-  "category_id": 3
+  "category_id": 3,
+  "conditional": 0
 }, {
   "clothes_index_id": 4,
-  "category_id": 4
+  "category_id": 4,
+  "conditional": 0
 }, {
   "clothes_index_id": 4,
-  "category_id": 13
+  "category_id": 13,
+  "conditional": 1
 }, {
   "clothes_index_id": 4,
-  "category_id": 14
+  "category_id": 14,
+  "conditional": 0
 }, {
   "clothes_index_id": 4,
-  "category_id": 15
+  "category_id": 15,
+  "conditional": 0
 }, {
   "clothes_index_id": 4,
-  "category_id": 16
+  "category_id": 16,
+  "conditional": 0
 }, {
   "clothes_index_id": 4,
-  "category_id": 17
+  "category_id": 17,
+  "conditional": 0
 }, {
   "clothes_index_id": 4,
-  "category_id": 18
+  "category_id": 18,
+  "conditional": 0
 }, {
   "clothes_index_id": 4,
-  "category_id": 19
+  "category_id": 19,
+  "conditional": 0
 }, {
   "clothes_index_id": 5,
-  "category_id": 4
+  "category_id": 4,
+  "conditional": 0
 }, {
   "clothes_index_id": 5,
-  "category_id": 5
+  "category_id": 5,
+  "conditional": 0
 }, {
   "clothes_index_id": 5,
-  "category_id": 6
+  "category_id": 6,
+  "conditional": 0
 }, {
   "clothes_index_id": 5,
-  "category_id": 7
+  "category_id": 7,
+  "conditional": 0
 }, {
   "clothes_index_id": 5,
-  "category_id": 8
+  "category_id": 8,
+  "conditional": 0
 }, {
   "clothes_index_id": 5,
-  "category_id": 13
+  "category_id": 13,
+  "conditional": 1
 }, {
   "clothes_index_id": 5,
-  "category_id": 14
+  "category_id": 14,
+  "conditional": 0
 }, {
   "clothes_index_id": 5,
-  "category_id": 15
+  "category_id": 15,
+  "conditional": 0
 }, {
   "clothes_index_id": 5,
-  "category_id": 18
+  "category_id": 18,
+  "conditional": 0
 }, {
   "clothes_index_id": 5,
-  "category_id": 19
+  "category_id": 19,
+  "conditional": 0
 }, {
   "clothes_index_id": 6,
-  "category_id": 5
+  "category_id": 5,
+  "conditional": 0
 }, {
   "clothes_index_id": 6,
-  "category_id": 6
+  "category_id": 6,
+  "conditional": 0
 }, {
   "clothes_index_id": 6,
-  "category_id": 7
+  "category_id": 7,
+  "conditional": 0
 }, {
   "clothes_index_id": 6,
-  "category_id": 8
+  "category_id": 8,
+  "conditional": 0
 }, {
   "clothes_index_id": 6,
-  "category_id": 13
+  "category_id": 13,
+  "conditional": 1
 }, {
   "clothes_index_id": 6,
-  "category_id": 14
+  "category_id": 14,
+  "conditional": 0
 }, {
   "clothes_index_id": 6,
-  "category_id": 15
+  "category_id": 15,
+  "conditional": 0
 }, {
   "clothes_index_id": 6,
-  "category_id": 18
+  "category_id": 18,
+  "conditional": 0
 }, {
   "clothes_index_id": 6,
-  "category_id": 19
+  "category_id": 19,
+  "conditional": 0
 }, {
   "clothes_index_id": 7,
-  "category_id": 5
+  "category_id": 5,
+  "conditional": 0
 }, {
   "clothes_index_id": 7,
-  "category_id": 6
+  "category_id": 6,
+  "conditional": 0
 }, {
   "clothes_index_id": 7,
-  "category_id": 7
+  "category_id": 7,
+  "conditional": 0
 }, {
   "clothes_index_id": 7,
-  "category_id": 8
+  "category_id": 8,
+  "conditional": 0
 }, {
   "clothes_index_id": 7,
-  "category_id": 12
+  "category_id": 12,
+  "conditional": 0
 }, {
   "clothes_index_id": 7,
-  "category_id": 13
+  "category_id": 13,
+  "conditional": 1
 }, {
   "clothes_index_id": 7,
-  "category_id": 18
+  "category_id": 18,
+  "conditional": 0
 }, {
   "clothes_index_id": 7,
-  "category_id": 19
+  "category_id": 19,
+  "conditional": 0
 }, {
   "clothes_index_id": 7,
-  "category_id": 20
+  "category_id": 20,
+  "conditional": 0
 }, {
   "clothes_index_id": 7,
-  "category_id": 21
+  "category_id": 21,
+  "conditional": 0
 }, {
   "clothes_index_id": 8,
-  "category_id": 12
+  "category_id": 12,
+  "conditional": 0
 }, {
   "clothes_index_id": 8,
-  "category_id": 13
+  "category_id": 13,
+  "conditional": 0
 }, {
   "clothes_index_id": 8,
-  "category_id": 18
+  "category_id": 18,
+  "conditional": 0
 }, {
   "clothes_index_id": 8,
-  "category_id": 19
+  "category_id": 19,
+  "conditional": 0
 }, {
   "clothes_index_id": 8,
-  "category_id": 20
+  "category_id": 20,
+  "conditional": 0
 }, {
   "clothes_index_id": 8,
-  "category_id": 21
+  "category_id": 21,
+  "conditional": 0
 }, {
   "clothes_index_id": 9,
-  "category_id": 9
+  "category_id": 9,
+  "conditional": 0
 }, {
   "clothes_index_id": 9,
-  "category_id": 10
+  "category_id": 10,
+  "conditional": 0
 }, {
   "clothes_index_id": 9,
-  "category_id": 11
+  "category_id": 11,
+  "conditional": 0
 }, {
   "clothes_index_id": 9,
-  "category_id": 12
+  "category_id": 12,
+  "conditional": 0
 }, {
   "clothes_index_id": 9,
-  "category_id": 13
+  "category_id": 13,
+  "conditional": 0
 }, {
   "clothes_index_id": 9,
-  "category_id": 18
+  "category_id": 18,
+  "conditional": 0
 }, {
   "clothes_index_id": 9,
-  "category_id": 19
+  "category_id": 19,
+  "conditional": 0
 }, {
   "clothes_index_id": 9,
-  "category_id": 20
+  "category_id": 20,
+  "conditional": 0
 }, {
   "clothes_index_id": 9,
-  "category_id": 21
+  "category_id": 21,
+  "conditional": 0
 }, {
   "clothes_index_id": 9,
-  "category_id": 22
+  "category_id": 22,
+  "conditional": 0
 }, {
   "clothes_index_id": 10,
-  "category_id": 9
+  "category_id": 9,
+  "conditional": 0
 }, {
   "clothes_index_id": 10,
-  "category_id": 10
+  "category_id": 10,
+  "conditional": 0
 }, {
   "clothes_index_id": 10,
-  "category_id": 11
+  "category_id": 11,
+  "conditional": 0
 }, {
   "clothes_index_id": 10,
-  "category_id": 12
+  "category_id": 12,
+  "conditional": 0
 }, {
   "clothes_index_id": 10,
-  "category_id": 13
+  "category_id": 13,
+  "conditional": 0
 }, {
   "clothes_index_id": 10,
-  "category_id": 18
+  "category_id": 18,
+  "conditional": 0
 }, {
   "clothes_index_id": 10,
-  "category_id": 19
+  "category_id": 19,
+  "conditional": 0
 }, {
   "clothes_index_id": 10,
-  "category_id": 20
+  "category_id": 20,
+  "conditional": 0
 }, {
   "clothes_index_id": 10,
-  "category_id": 21
+  "category_id": 21,
+  "conditional": 0
 }, {
   "clothes_index_id": 10,
-  "category_id": 22
+  "category_id": 22,
+  "conditional": 0
 }]

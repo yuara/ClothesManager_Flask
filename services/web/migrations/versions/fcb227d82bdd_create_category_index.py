@@ -22,6 +22,7 @@ def upgrade():
         "category_index",
         sa.Column("clothes_index_id", sa.Integer(), nullable=True),
         sa.Column("category_id", sa.Integer(), nullable=True),
+        sa.Column("conditional", sa.Boolean()),
         sa.ForeignKeyConstraint(["category_id"], ["category.id"],),
         sa.ForeignKeyConstraint(["clothes_index_id"], ["clothes_index.id"],),
     )

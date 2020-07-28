@@ -2,72 +2,84 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-<h1>{{ _('Hi,%(username)s!', username=current_user.username) }}</h1>
+  <h1>{{ _('Hi,%(username)s!', username=current_user.username) }}</h1>
 
-{% if forecast %}
-<table class="table table-hover">
-  <tr>
-    <th>{{ _('Update time') }}</th>
-    <th>{{ _('Location') }}</th>
-    <th>{{ _('Clothes Index') }}</th>
-    <th>{{ _('Weather') }}</th>
-    <th>{{ _('High / Low') }}</th>
-    <th>{{ _('Chance of Rain') }}</th>
-  </tr>
-  <tr>
-    <td>{{ forecast.Forecast.update_time.isoformat(sep=' ', timespec='minutes') }}</td>
-    <td>
-      {{ forecast.pref_name }} / {{ forecast.city_name }}
-    </td>
-    <td>{{ forecast.value }}</td>
-    <td>
-      {{ forecast.Forecast.weather }}
-    </td>
-    <td>
-      {{ forecast.Forecast.highest_temp }} / {{ forecast.Forecast.lowest_temp }}
-    </td>
-    <td>
-      {{ forecast.Forecast.rain_chance }} %
-    </td>
-  </tr>
-</table>
-{% endif %}
+  <div class="container">
+    {% if forecast %}
+      <table class="table table-hover">
+        <tr>
+          <th>{{ _('Update time') }}</th>
+          <th>{{ _('Location') }}</th>
+          <th>{{ _('Clothes Index') }}</th>
+          <th>{{ _('Weather') }}</th>
+          <th>{{ _('High / Low') }}</th>
+          <th>{{ _('Chance of Rain') }}</th>
+        </tr>
+        <tr>
+          <td>{{ forecast.Forecast.update_time.isoformat(sep=' ', timespec='minutes') }}</td>
+          <td>
+            {{ forecast.pref_name }}
+            /
+            {{ forecast.city_name }}
+          </td>
+          <td>{{ forecast.value }}</td>
+          <td>
+            {{ forecast.Forecast.weather }}
+          </td>
+          <td>
+            {{ forecast.Forecast.highest_temp }}
+            /
+            {{ forecast.Forecast.lowest_temp }}
+          </td>
+          <td>
+            {{ forecast.Forecast.rain_chance }}
+            %
+          </td>
+        </tr>
+      </table>
+    {% endif %}
 
-{% if suggestions %}
-<table class="table table-hover">
-  <tr>
-    <th></th>
-    <th>{{ _('Outerwears')}}</th>
-    <th>{{ _('Tops')}}</th>
-    <th>{{ _('Bottoms')}}</th>
-  </tr>
-  {% for suggestion in suggestions %}
-  <tr>
-    <td></td>
-    {% for clothes in suggestion %}
-    <td>
-      {% if clothes %}
-      {{ clothes.name }}
-      {% else %}
-      ----------
+    {% if outwears or tops or bottoms %}
+      {% if outwears %}
+        <table class="table table-hover">
+          <tr>
+            <th>{{ _('Outerwears')}}</th>
+          </tr>
+          <tr>
+            {% for outwear in outwears %}
+              <td>{{ outwear.name }}</td>
+            {% endfor %}
+          </tr>
+        </table>
       {% endif %}
-    </td>
-    {% endfor %}
-  </tr>
-  {% endfor %}
-</table>
-{% endif %}
 
-{% if post %}
-{% include '_post.html' %}
-{% elif posts %}
-{% for post in posts %}
-{% include '_post.html' %}
-{% endfor %}
-{% endif %}
-{% if post_form %}
-{{ wtf.quick_form(post_form) }}
-<br>
-{% endif %}
+      {% if tops %}
+        <table class="table table-hover">
+          <tr>
+            <th>{{ _('Tops')}}</th>
+          </tr>
+          <tr>
+            {% for top in tops %}
+              <td>{{ top.name }}</td>
+            {% endfor %}
+          </tr>
+        </table>
+      {% endif %}
 
-{% endblock %}
+      {% if bottoms %}
+        <table class="table table-hover">
+          <tr>
+            <th>{{ _('Bottoms')}}</th>
+          </tr>
+          <tr>
+            {% for bottom in bottoms %}
+              <td>{{ bottom.name }}</td>
+            {% endfor %}
+          </tr>
+        </table>
+      {% endif %}
+    {% endif %}
+
+  {% endblock %}
+
+</div>

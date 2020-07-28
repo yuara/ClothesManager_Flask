@@ -2,7 +2,7 @@
 
 {% block app_content %}
 <h1>{{ _('Closet') }}</h1>
-<h4><a href="{{ url_for('clothes.add_clothes') }}">{{ _('Add your new clothes') }}</a></h4>
+<a class="btn btn-default" href="{{ url_for('clothes.add_clothes') }}" role="button">{{ _('Add your new clothes') }}</a>
 {% if user_clothes %}
 <table class="table table-hover">
   <tr>
@@ -14,8 +14,7 @@
   {% for name, time, parent_category, child_category in user_clothes %}
   <tr>
     <td>{{ name }}</td>
-    <td>{{ parent_category }}</td>
-    <td>{{ child_category }}</td>
+    <td>{{ parent_category }} / {{ child_category }}</td>
     <td>{{ moment(time).fromNow() }}</td>
   </tr>
   </tr>

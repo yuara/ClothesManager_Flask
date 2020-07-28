@@ -2,8 +2,8 @@
 
 {% block app_content %}
 <h1>{{ _('Outfits') }}</h1>
-<h4><a href="{{ url_for('clothes.set_outfit') }}">{{ _('Choose your clothes by yourself') }}</a></h4>
-
+<a class="btn btn-default" href="{{ url_for('clothes.set_outfit') }}" role="button">{{ _('Add your new clothes') }}</a>
+{% if user_outfits %}
 <table class="table table-hover">
   <tr>
     <th>{{ _('Outfit Name') }}</th>
@@ -64,4 +64,5 @@
     </li>
   </ul>
 </nav>
+{% endif %}
 {% endblock %}

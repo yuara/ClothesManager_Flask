@@ -94,12 +94,7 @@ category_index = db.Table(
     "category_index",
     db.Column("clothes_index_id", db.Integer, db.ForeignKey("clothes_index.id")),
     db.Column("category_id", db.Integer, db.ForeignKey("category.id")),
-)
-
-category_condition = db.Table(
-    "category_condition",
-    db.Column("clothes_index_id", db.Integer, db.ForeignKey("clothes_index.id")),
-    db.Column("category_id", db.Integer, db.ForeignKey("category.id")),
+    db.Column("conditional", db.Boolean),
 )
 
 
@@ -226,8 +221,10 @@ class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
             "username": self.username,
             "last_seen": self.last_seen.isoformat() + "Z",
             "about_me": self.about_me,
+            "location": Location.query.filter_by(id=self.location_id).first(),
             "post_count": self.posts.count(),
-            "clothes_count": self.clothes_recorded.count(),
+            "clothes_count": self.own_clothes.count(),
+            "outfit_count": self.oputfits.count(),
             "follower_count": self.followers.count(),
             "followed_count": self.followed.count(),
             "_links": {
@@ -413,12 +410,6 @@ class ClothesIndex(db.Model):
     description = db.Column(db.String(140))
     categories = db.relationship(
         "Category", secondary=category_index, backref="category_indexes", lazy="dynamic"
-    )
-    conditions = db.relationship(
-        "Category",
-        secondary=category_condition,
-        backref="condition_indexes",
-        lazy="dynamic",
     )
 
     def __repr__(self):
