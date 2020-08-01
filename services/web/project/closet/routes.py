@@ -11,7 +11,7 @@ from flask import (
 from flask_login import current_user, login_required
 from flask_babel import _
 from project import db
-from project.clothes.forms import (
+from project.closet.forms import (
     ClothesForm,
     OutfitForm,
 )
@@ -21,7 +21,7 @@ from project.models import (
     Category,
     Outfit,
 )
-from project.clothes import bp
+from project.closet import bp
 
 
 @bp.route("/_get_categories/")
@@ -33,9 +33,29 @@ def _get_categories():
     return jsonify(categories)
 
 
-@bp.route("/closet/")
+@bp.route("/clothes/", methods=["POST", "GET"])
 @login_required
-def closet():
+def clothes():
+    form = ClothesForm(form_name="ClothesForm")
+    if form.validate_on_submit() and request.form["form_name"] == "ClothesForm":
+        if form.name.data:
+            _name = form.name.data
+        else:
+            _category = Category.query.filter_by(id=form.child_category.data).first()
+            _count = (
+                current_user.own_clothes.filter_by(category_id=_category.id).count() + 1
+            )
+            _name = f"{_category.child_name} {_count}"
+        clothes = Clothes(
+            name=_name,
+            note=form.note.data,
+            category_id=form.child_category.data,
+            owner=current_user,
+        )
+        db.session.add(clothes)
+        db.session.commit()
+        flash(_("You added your clothes!"))
+        return redirect(url_for("closet.clothes"))
     page = request.args.get("page", 1, type=int)
     user_clothes = (
         db.session.query(
@@ -48,17 +68,19 @@ def closet():
         .paginate(page, current_app.config["POSTS_PER_PAGE"], False)
     )
     next_url = (
-        url_for("clothes.closet", page=user_clothes.next_num)
+        url_for("closet.clothes", page=user_clothes.next_num)
         if user_clothes.has_next
         else None
     )
     prev_url = (
-        url_for("clothes.closet", page=user_clothes.prev_num)
+        url_for("closet.clothes", page=user_clothes.prev_num)
         if user_clothes.has_prev
         else None
     )
     return render_template(
-        "clothes/closet.html",
+        "closet/clothes.html",
+        title=_("Clothes"),
+        form=form,
         user_clothes=user_clothes.items,
         next_url=next_url,
         prev_url=prev_url,
@@ -87,15 +109,41 @@ def add_clothes():
         db.session.add(clothes)
         db.session.commit()
         flash(_("You added your clothes!"))
-        return redirect(url_for("clothes.closet"))
-    return render_template(
-        "clothes/add_clothes.html", title=_("Add clothes"), form=form
-    )
+        return redirect(url_for("closet.clothes"))
+    return render_template("closet/add_clothes.html", title=_("Add Clothes"), form=form)
 
 
-@bp.route("/outfits/")
+@bp.route("/outfits/", methods=["POST", "GET"])
 @login_required
 def outfits():
+    form = OutfitForm()
+    if form.validate_on_submit():
+        if form.name.data:
+            _name = form.name.data
+        else:
+            _count = current_user.outfits.count() + 1
+            _name = f"Outfit {_count}"
+
+        _jacket = None if form.jackets.data == 0 else form.jackets.data
+        _top_2 = None if form.tops_2.data == 0 else form.tops_2.data
+
+        outfit = Outfit(
+            name=_name,
+            note=form.note.data,
+            owner_id=current_user.id,
+            jacket_id=_jacket,
+            top_1_id=form.tops_1.data,
+            top_2_id=_top_2,
+            bottom_id=form.bottoms.data,
+        )
+        db.session.add(outfit)
+        db.session.commit()
+        flash(_("You set your outfit!!"))
+        return redirect(url_for("closet.outfits"))
+
+    _clothes = current_user.own_clothes.count()
+    has_clothes = True if _clothes > 0 else False
+
     c1 = aliased(Clothes)
     c2 = aliased(Clothes)
     c3 = aliased(Clothes)
@@ -116,17 +164,20 @@ def outfits():
         .paginate(page, current_app.config["POSTS_PER_PAGE"], False)
     )
     next_url = (
-        url_for("clothes.outfits", page=user_outfits.next_num)
+        url_for("closet.outfits", page=user_outfits.next_num)
         if user_outfits.has_next
         else None
     )
     prev_url = (
-        url_for("clothes.outfits", page=user_outfits.prev_num)
+        url_for("closet.outfits", page=user_outfits.prev_num)
         if user_outfits.has_prev
         else None
     )
     return render_template(
-        "clothes/outfits.html",
+        "closet/outfits.html",
+        title=_("Outfits"),
+        form=form,
+        has_clothes=has_clothes,
         user_outfits=user_outfits.items,
         next_url=next_url,
         prev_url=prev_url,
@@ -159,5 +210,6 @@ def set_outfit():
         db.session.add(outfit)
         db.session.commit()
         flash(_("You set your outfit!!"))
-        return redirect(url_for("clothes.outfits"))
-    return render_template("/clothes/set_outfit.html", title=_("Set Outfit"), form=form)
+        return redirect(url_for("closet.outfits"))
+
+    return render_template("/closet/set_outfit.html", title=_("Set Outfit"), form=form,)

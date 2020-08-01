@@ -45,23 +45,13 @@ def before_request():
 
 @bp.route("/home")
 def home():
-    return render_template("home.html")
+    return render_template("home.html", title=_("Home"))
 
 
 @bp.route("/", methods=["GET", "POST"])
 @bp.route("/index/", methods=["GET", "POST"])
 @login_required
 def index():
-    form = PostForm()
-    if form.validate_on_submit():
-        language = guess_language(form.post.data)
-        if language == "UNKNOWN" or len(language) > 5:
-            language = ""
-        post = Post(body=form.post.data, author=current_user, language=language)
-        db.session.add(post)
-        db.session.commit()
-        flash(_("Your post is now live!"))
-        return redirect(url_for("main.index"))
     user_forecast = (
         db.session.query(
             Forecast, Location.pref_name, Location.city_name, ClothesIndex.value
@@ -81,9 +71,7 @@ def index():
 
     return render_template(
         "index.html",
-        title=_("Home"),
-        post_form=form,
-        post=latest_post,
+        title=_("Dashboard"),
         forecast=user_forecast,
         outwears=outwears,
         tops=tops,
@@ -101,7 +89,7 @@ def explore():
     next_url = url_for("main.explore", page=posts.next_num) if posts.has_next else None
     prev_url = url_for("main.explore", page=posts.prev_num) if posts.has_prev else None
     return render_template(
-        "index.html",
+        "explore.html",
         title=_("Explore"),
         posts=posts.items,
         next_url=next_url,
@@ -112,16 +100,27 @@ def explore():
 @bp.route("/user/<username>/", methods=["GET", "POST"])
 @login_required
 def user(username):
-    form = PostForm()
-    if form.validate_on_submit():
-        language = guess_language(form.post.data)
+    post_form = PostForm()
+    if post_form.validate_on_submit():
+        language = guess_language(post_form.post.data)
         if language == "UNKNOWN" or len(language) > 5:
             language = ""
-        post = Post(body=form.post.data, author=current_user, language=language)
+        post = Post(body=post_form.post.data, author=current_user, language=language)
         db.session.add(post)
         db.session.commit()
         flash(_("Your post is now live!"))
         return redirect(url_for("main.user", username=current_user.username))
+    edit_form = EditProfileForm(current_user.username)
+    if edit_form.validate_on_submit():
+        current_user.username = edit_form.username.data
+        current_user.about_me = edit_form.about_me.data
+        current_user.location_id = edit_form.location_pref.data
+        db.session.commit()
+        flash(_("Your changes have been saved."))
+        return redirect(url_for("main.user", username=current_user.username))
+        if request.method == "GET":
+            edit_form.username.data = current_user.username
+            edit_form.about_me.data = current_user.about_me
     user = User.query.filter_by(username=username).first_or_404()
     location = Location.query.filter_by(id=user.location_id).first()
     page = request.args.get("page", 1, type=int)
@@ -129,21 +128,22 @@ def user(username):
         page, current_app.config["POSTS_PER_PAGE"], False
     )
     next_url = (
-        url_for("main.user", username=user.username, page=posts.next_num)
+        url_for("main.user", username=current_user.username, page=posts.next_num)
         if posts.has_next
         else None
     )
     prev_url = (
-        url_for("main.user", username=user.username, page=posts.prev_num)
+        url_for("main.user", username=current_user.username, page=posts.prev_num)
         if posts.has_prev
         else None
     )
     return render_template(
         "user.html",
         user=user,
-        form=form,
         location=location,
         posts=posts.items,
+        edit_form=edit_form,
+        post_form=post_form,
         next_url=next_url,
         prev_url=prev_url,
     )
@@ -166,11 +166,48 @@ def edit_profile():
         current_user.location_id = form.location_pref.data
         db.session.commit()
         flash(_("Your changes have been saved."))
-        return redirect(url_for("main.edit_profile"))
+        return redirect(url_for("main.user", username=current_user.username))
     elif request.method == "GET":
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
     return render_template("edit_profile.html", title=_("Edit Profile"), form=form)
+
+
+@bp.route("/user/post/", methods=["POST", "GET"])
+@login_required
+def post():
+    post_form = PostForm()
+    if post_form.validate_on_submit():
+        language = guess_language(post_form.post.data)
+        if language == "UNKNOWN" or len(language) > 5:
+            language = ""
+        post = Post(body=post_form.post.data, author=current_user, language=language)
+        db.session.add(post)
+        db.session.commit()
+        flash(_("Your post is now live!"))
+        return redirect(url_for("main.user", username=current_user.username))
+    page = request.args.get("page", 1, type=int)
+    posts = current_user.posts.order_by(Post.timestamp.desc()).paginate(
+        page, current_app.config["POSTS_PER_PAGE"], False
+    )
+    next_url = (
+        url_for("main.user", username=current_user.username, page=posts.next_num)
+        if posts.has_next
+        else None
+    )
+    prev_url = (
+        url_for("main.user", username=current_user.username, page=posts.prev_num)
+        if posts.has_prev
+        else None
+    )
+    return render_template(
+        "post.html",
+        user=user,
+        post_form=post_form,
+        posts=posts.items,
+        next_url=next_url,
+        prev_url=prev_url,
+    )
 
 
 @bp.route("/follow/<username>/")
