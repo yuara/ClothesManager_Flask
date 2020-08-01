@@ -1,47 +1,178 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-<table>
-  <tr class="table table-hover">
-    <td width="256px"><img src="{{ user.avatar(200) }}"></td>
-    <td>
-      <h1>{{ _('User') }}: {{ user.username }}</h1>
-      {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
-      {% if user.last_seen %}
-      <p>{{ _('Last seen on') }}: {{ moment(user.last_seen).format('LLL') }}</p>
-      {% endif %}
-      <p>{{ _('%(count)d followers', count=user.followers.count()) }}, {{ _('%(count)d following', count=user.followed.count()) }}</p>
-      {% if user == current_user %}
-      <p><a href="{{ url_for("main.edit_profile") }}">{{ _('Edit your profile') }}</a></p>
-      {% if not current_user.get_task_in_progress('export_posts') %}
-      <p><a href="{{ url_for('main.export_posts') }}">{{ _('Export your posts') }}</a></p>
-      {% endif %}
-      {% elif not current_user.is_following(user) %}
-      <p><a href="{{ url_for('main.follow', username=user.username) }}">{{ _('Follow') }}</a></p>
-      {% else %}
-      <p><a href="{{ url_for('main.unfollow', username=user.username) }}">{{ _('Unfollow') }}</a></p>
-      {% endif %}
-      {% if user != current_user %}
-      <p><a href="{{ url_for('main.send_message', recipient=user.username) }}">{{ _('Send private message') }}</a></p>
-      {% endif %}
-    </td>
-  </tr>
-</table>
-{% for post in posts %}
-{% include '_post.html' %}
-{% endfor %}
-<nav aria-label="...">
-  <ul class="pager">
-    <li class="previous{% if not prev_url %} disabled{% endif %}">
-      <a href="{{ prev_url or '#' }}">
-        <span aria-hidden="true">&larr;</span> Newer posts
-      </a>
-    </li>
-    <li class="next{% if not next_url %} disabled{% endif %}">
-      <a href="{{ next_url or '#' }}">
-        Older posts <span aria-hidden="true">&rarr;</span>
-      </a>
-    </li>
-  </ul>
-</nav>
+  <h1 class="mt-4">{{ _('Profile') }}</h1>
+  <ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">{{ _('User') }}</li>
+    <li class="breadcrumb-item active">{{ _('Profile') }}</li>
+  </ol>
+  <div class="row">
+    <div class="col-lg-4 col-md-12">
+      <div class="card mb-4">
+        <div class="card-header">
+          <img src="{{ user.avatar(25) }}" class="mr-2">{{ user.username }}
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              <table border="0" class="table">
+                <tr>
+                  <th>{{ _('Username') }}</th>
+                  <td>{{ user.username }}</td>
+                </tr>
+                <tr>
+                  <th>{{ _('About Me') }}</th>
+                  <td>{{ user.about_me }}</td>
+                </tr>
+                <tr>
+                  <th>{{ _('Last seen on') }}</th>
+                  <td>{{ moment(user.last_seen).format('LLL') }}</td>
+                </tr>
+                {% if user == current_user %}
+                  <tr>
+                    <th>{{ _('Your Place') }}</th>
+                    {% if location %}
+                      <td>{{ location.pref_name }}</td>
+                    {% else %}
+                      <td>{{ _('Not Set Your Location Yet') }}</td>
+                    {% endif %}
+                  </tr>
+                  {% else %}
+                  <tr>
+                    <th>{{ _('Followers') }}</th>
+                    <td>{{ _('%(count)d followers', count=user.followers.count()) }}</td>
+                  </tr>
+                  <tr>
+                    <th>{{ _('Followed') }}</th>
+                    <td>{{ _('%(count)d following', count=user.followed.count()) }}</td>
+                  </tr>
+                  <tr>
+                    <th>{{ _('Clothes') }}</th>
+                    <td>{{ _('%(count)d clothes', count=user.own_clothes.count()) }}</td>
+                  </tr>
+                  <tr>
+                    <th>{{ _('Outfits') }}</th>
+                    <td>{{ _('%(count)d outfits', count=user.outfits.count()) }}</td>
+                  </tr>
+                  {% if not current_user.is_following(user) %}
+                    <tr>
+                      <th>
+                        <a href="{{ url_for('main.follow', username=user.username) }}">{{ _('Follow') }}</a>
+                      </th>
+                      <td></td>
+                    </tr>
+                  {% else %}
+                    <tr>
+                      <th>
+                        <a href="{{ url_for('main.unfollow', username=user.username) }}">{{ _('Unfollow') }}</a>
+                      </th>
+                      <td></td>
+                    </tr>
+                  {% endif %}
+                {% endif %}
+                {% if user != current_user %}
+                  <tr>
+                    <th>
+                      <a href="{{ url_for('main.send_message', recipient=user.username) }}">{{ _('Send private message') }}</a>
+                    </th>
+                    <td></td>
+                  </tr>
+                {% endif %}
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+      <div class="col-lg-4 col-md-12">
+        <div class="card mb-4">
+          <div class="card-header">
+            <i class="fas fa-table mr-1"></i>
+            {{ _('Post') }}
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12">
+                {% if posts %}
+                {% for post in posts %}
+                  <table class="table table-hover">
+                    <tr>
+                      <td width="70px">
+                        <a href="{{ url_for('main.user', username=post.author.username) }}">
+                          <img src="{{ post.author.avatar(50) }}">
+                        </a>
+                      </td>
+                      <td>
+                        {% set user_link %}
+                        <span class="user_popup">
+                          <a href="{{ url_for('main.user', username=post.author.username) }}">
+                            {{ post.author.username }}
+                          </a>
+                        </span>
+                        {% endset %}
+                        {{ _('%(username)s said: %(when)s', username=user_link, when=moment(post.timestamp).fromNow()) }}
+                        <br>
+                        <span id="post{{ post.id }}">{{ post.body }}</span>
+                        {% if post.language and post.language != g.locale %}
+                          <br><br>
+                          <span id="translation{{ post.id }}">
+                            <a href="javascript:translate(
+                              '#post{{ post.id }}',
+                              '#translation{{ post.id }}',
+                              '{{ post.language }}',
+                              '{{ g.locale }}');">{{ _('Translate') }}</a>
+                          </span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  </table>
+                {% endfor %}
+                <nav aria-label="...">
+                  <ul class="pagination justify-content-center">
+                    <li class="page-item {% if not prev_url %} disabled{% endif %} text-left">
+                      <a class="page-link" href="{{ prev_url or '#'}}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                      </a>
+                    </li>
+                    <li class="page-item {% if not next_url %} disabled{% endif %}">
+                      <a class="page-link" href="{{ next_url or '#'}}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+                {% else %}
+                {{ _('No Posts Yet') }}
+                {% endif %}
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    {% if user==current_user and edit_form %}
+      <div class="col-lg-4 col-md-12">
+        <div class="card mb-4">
+          <div class="card-header">
+            <i class="fas fa-table mr-1"></i>
+            {{ _('Edit') }}
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-12">
+                {{ wtf.quick_form(edit_form) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
 {% endblock %}

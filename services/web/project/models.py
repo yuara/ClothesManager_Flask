@@ -90,10 +90,11 @@ followers = db.Table(
     db.Column("followed_id", db.Integer, db.ForeignKey("user.id")),
 )
 
-clothes_outfits = db.Table(
-    "clothes_outfits",
-    db.Column("outfit_id", db.Integer, db.ForeignKey("outfit.id")),
-    db.Column("clothes_id", db.Integer, db.ForeignKey("clothes.id")),
+category_index = db.Table(
+    "category_index",
+    db.Column("clothes_index_id", db.Integer, db.ForeignKey("clothes_index.id")),
+    db.Column("category_id", db.Integer, db.ForeignKey("category.id")),
+    db.Column("conditional", db.Boolean),
 )
 
 
@@ -132,6 +133,7 @@ class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
     token_expiration = db.Column(db.DateTime)
     own_clothes = db.relationship("Clothes", backref="owner", lazy="dynamic")
     outfits = db.relationship("Outfit", backref="owner", lazy="dynamic")
+    location_id = db.Column(db.Integer, index=True)
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -219,8 +221,10 @@ class User(PagenatedAPIMixin, SearchableMixin, UserMixin, db.Model):
             "username": self.username,
             "last_seen": self.last_seen.isoformat() + "Z",
             "about_me": self.about_me,
+            "location": Location.query.filter_by(id=self.location_id).first(),
             "post_count": self.posts.count(),
-            "clothes_count": self.clothes_recorded.count(),
+            "clothes_count": self.own_clothes.count(),
+            "outfit_count": self.oputfits.count(),
             "follower_count": self.followers.count(),
             "followed_count": self.followed.count(),
             "_links": {
@@ -330,14 +334,6 @@ class Task(db.Model):
         return job.meta.get("progress", 0) if job is not None else 100
 
 
-class Shape(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20))
-
-    def __repr__(self):
-        return f"<Shape {self.name}>"
-
-
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     parent_id = db.Column(db.Integer, index=True)
@@ -348,11 +344,6 @@ class Category(db.Model):
     def __repr__(self):
         return f"<Category {self.id}:{self.parent_name}-{self.child_name}>"
 
-    @classmethod
-    def get_id_by_parent_id(self, parent_id):
-        categories = self.query.filter_by(parent_id=parent_id).all()
-        return [cate.id for cate in categories]
-
 
 class Clothes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -361,20 +352,9 @@ class Clothes(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     owner_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     category_id = db.Column(db.Integer, index=True)
-    shape_id = db.Column(db.Integer, index=True)
 
     def __repr__(self):
-        return f"<Clothes {self.name}>"
-
-    @classmethod
-    def get_clothes_by_categoris(self, category_list):
-        clothes_list = []
-        for category_id in category_list:
-            clothes = self.query.filter(
-                self.owner_id == current_user.id, self.category_id == category_id
-            ).all()
-            clothes_list += clothes
-        return clothes_list
+        return f"<Clothes {self.id}:{self.name}>"
 
 
 class Outfit(db.Model):
@@ -383,23 +363,54 @@ class Outfit(db.Model):
     note = db.Column(db.String(140), nullable=True)
     owner_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    set_clothes = db.relationship(
-        "Clothes", secondary=clothes_outfits, backref="outfits", lazy="dynamic"
-    )
+    jacket_id = db.Column(db.Integer, db.ForeignKey("clothes.id"))
+    top_1_id = db.Column(db.Integer, db.ForeignKey("clothes.id"))
+    top_2_id = db.Column(db.Integer, db.ForeignKey("clothes.id"))
+    bottom_id = db.Column(db.Integer, db.ForeignKey("clothes.id"))
+
+    jacket = db.relationship("Clothes", foreign_keys="Outfit.jacket_id")
+    top_1 = db.relationship("Clothes", foreign_keys="Outfit.top_1_id")
+    top_2 = db.relationship("Clothes", foreign_keys="Outfit.top_2_id")
+    bottom = db.relationship("Clothes", foreign_keys="Outfit.bottom_id")
 
     def __repr__(self):
         return f"<Outfit {self.name}>"
 
-    def put_clothes(self, clothes):
-        if not self.has_clothes(clothes):
-            self.set_clothes.append(clothes)
 
-    # def remove_clothes(self, clothes):
-    #     if self.has_clothes(clothes):
-    #         self.set_clothes.remove(clothes)
-    #
-    def has_clothes(self, clothes):
-        return (
-            self.set_clothes.filter(clothes_outfits.c.clothes_id == clothes.id).count()
-            > 0
-        )
+class Forecast(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    location_id = db.Column(db.Integer, index=True)
+    clothes_index_id = db.Column(db.Integer)
+    weather = db.Column(db.String(30), nullable=True)
+    highest_temp = db.Column(db.Integer, nullable=True)
+    lowest_temp = db.Column(db.Integer, nullable=True)
+    rain_chance = db.Column(db.Integer, nullable=True)
+    update_time = db.Column(db.DateTime, index=True)
+
+    def __repr__(self):
+        return f"<Forecast {self.id}:{self.update_time}>"
+
+
+class Location(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    area_id = db.Column(db.Integer)
+    pref_id = db.Column(db.Integer)
+    city_id = db.Column(db.Integer)
+    area_name = db.Column(db.String(20))
+    pref_name = db.Column(db.String(20))
+    city_name = db.Column(db.String(20))
+
+    def __repr__(self):
+        return f"<Location {self.id}:{self.pref_name}/{self.city_name}>"
+
+
+class ClothesIndex(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.Integer)
+    description = db.Column(db.String(140))
+    categories = db.relationship(
+        "Category", secondary=category_index, backref="category_indexes", lazy="dynamic"
+    )
+
+    def __repr__(self):
+        return f"<ClothesIndex {self.id}:{self.value}>"

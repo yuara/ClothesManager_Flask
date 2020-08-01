@@ -19,7 +19,17 @@ from project.main.forms import (
     SearchForm,
     MessagesForm,
 )
-from project.models import User, Post, Message, Notification
+from project.models import (
+    User,
+    Post,
+    Message,
+    Notification,
+    Category,
+    Forecast,
+    Location,
+    ClothesIndex,
+)
+from project.suggest import suggest
 from project.translate import translate
 from project.main import bp
 
@@ -33,33 +43,39 @@ def before_request():
     g.locale = str(get_locale())
 
 
+@bp.route("/home")
+def home():
+    return render_template("home.html", title=_("Home"))
+
+
 @bp.route("/", methods=["GET", "POST"])
 @bp.route("/index/", methods=["GET", "POST"])
 @login_required
 def index():
-    form = PostForm()
-    if form.validate_on_submit():
-        language = guess_language(form.post.data)
-        if language == "UNKNOWN" or len(language) > 5:
-            language = ""
-        post = Post(body=form.post.data, author=current_user, language=language)
-        db.session.add(post)
-        db.session.commit()
-        flash(_("Your post is now live!"))
-        return redirect(url_for("main.index"))
-    page = request.args.get("page", 1, type=int)
-    posts = current_user.followed_posts().paginate(
-        page, current_app.config["POSTS_PER_PAGE"], False
+    user_forecast = (
+        db.session.query(
+            Forecast, Location.pref_name, Location.city_name, ClothesIndex.value
+        )
+        .join(Location, Location.id == Forecast.location_id)
+        .join(ClothesIndex, ClothesIndex.id == Forecast.clothes_index_id)
+        .join(User, User.location_id == Location.id)
+        .filter(User.id == current_user.id)
+        .order_by(Forecast.update_time.desc())
+        .first()
     )
-    next_url = url_for("main.index", page=posts.next_num) if posts.has_next else None
-    prev_url = url_for("main.index", page=posts.prev_num) if posts.has_prev else None
+    latest_post = current_user.posts.order_by(Post.timestamp.desc()).first()
+    suggestions = suggest(user_forecast.Forecast.clothes_index_id)
+    outwears = suggestions.filter(Category.parent_id == 1).all()
+    tops = suggestions.filter(Category.parent_id == 2).all()
+    bottoms = suggestions.filter(Category.parent_id == 3).all()
+
     return render_template(
         "index.html",
-        title=_("Home"),
-        post_form=form,
-        posts=posts.items,
-        next_url=next_url,
-        prev_url=prev_url,
+        title=_("Dashboard"),
+        forecast=user_forecast,
+        outwears=outwears,
+        tops=tops,
+        bottoms=bottoms,
     )
 
 
@@ -73,7 +89,7 @@ def explore():
     next_url = url_for("main.explore", page=posts.next_num) if posts.has_next else None
     prev_url = url_for("main.explore", page=posts.prev_num) if posts.has_prev else None
     return render_template(
-        "index.html",
+        "explore.html",
         title=_("Explore"),
         posts=posts.items,
         next_url=next_url,
@@ -81,26 +97,55 @@ def explore():
     )
 
 
-@bp.route("/user/<username>/")
+@bp.route("/user/<username>/", methods=["GET", "POST"])
 @login_required
 def user(username):
+    post_form = PostForm()
+    if post_form.validate_on_submit():
+        language = guess_language(post_form.post.data)
+        if language == "UNKNOWN" or len(language) > 5:
+            language = ""
+        post = Post(body=post_form.post.data, author=current_user, language=language)
+        db.session.add(post)
+        db.session.commit()
+        flash(_("Your post is now live!"))
+        return redirect(url_for("main.user", username=current_user.username))
+    edit_form = EditProfileForm(current_user.username)
+    if edit_form.validate_on_submit():
+        current_user.username = edit_form.username.data
+        current_user.about_me = edit_form.about_me.data
+        current_user.location_id = edit_form.location_pref.data
+        db.session.commit()
+        flash(_("Your changes have been saved."))
+        return redirect(url_for("main.user", username=current_user.username))
+        if request.method == "GET":
+            edit_form.username.data = current_user.username
+            edit_form.about_me.data = current_user.about_me
     user = User.query.filter_by(username=username).first_or_404()
+    location = Location.query.filter_by(id=user.location_id).first()
     page = request.args.get("page", 1, type=int)
     posts = user.posts.order_by(Post.timestamp.desc()).paginate(
         page, current_app.config["POSTS_PER_PAGE"], False
     )
     next_url = (
-        url_for("main.user", username=user.username, page=posts.next_num)
+        url_for("main.user", username=current_user.username, page=posts.next_num)
         if posts.has_next
         else None
     )
     prev_url = (
-        url_for("main.user", username=user.username, page=posts.prev_num)
+        url_for("main.user", username=current_user.username, page=posts.prev_num)
         if posts.has_prev
         else None
     )
     return render_template(
-        "user.html", user=user, posts=posts.items, next_url=next_url, prev_url=prev_url,
+        "user.html",
+        user=user,
+        location=location,
+        posts=posts.items,
+        edit_form=edit_form,
+        post_form=post_form,
+        next_url=next_url,
+        prev_url=prev_url,
     )
 
 
@@ -118,13 +163,51 @@ def edit_profile():
     if form.validate_on_submit():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
+        current_user.location_id = form.location_pref.data
         db.session.commit()
         flash(_("Your changes have been saved."))
-        return redirect(url_for("main.edit_profile"))
+        return redirect(url_for("main.user", username=current_user.username))
     elif request.method == "GET":
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
     return render_template("edit_profile.html", title=_("Edit Profile"), form=form)
+
+
+@bp.route("/user/post/", methods=["POST", "GET"])
+@login_required
+def post():
+    post_form = PostForm()
+    if post_form.validate_on_submit():
+        language = guess_language(post_form.post.data)
+        if language == "UNKNOWN" or len(language) > 5:
+            language = ""
+        post = Post(body=post_form.post.data, author=current_user, language=language)
+        db.session.add(post)
+        db.session.commit()
+        flash(_("Your post is now live!"))
+        return redirect(url_for("main.user", username=current_user.username))
+    page = request.args.get("page", 1, type=int)
+    posts = current_user.posts.order_by(Post.timestamp.desc()).paginate(
+        page, current_app.config["POSTS_PER_PAGE"], False
+    )
+    next_url = (
+        url_for("main.user", username=current_user.username, page=posts.next_num)
+        if posts.has_next
+        else None
+    )
+    prev_url = (
+        url_for("main.user", username=current_user.username, page=posts.prev_num)
+        if posts.has_prev
+        else None
+    )
+    return render_template(
+        "post.html",
+        user=user,
+        post_form=post_form,
+        posts=posts.items,
+        next_url=next_url,
+        prev_url=prev_url,
+    )
 
 
 @bp.route("/follow/<username>/")
@@ -180,10 +263,10 @@ def search():
     # if not g.search_form.validate():
     #     return redirect(url_for("main.explore"))
     page = request.args.get("page", 1, type=int)
-    posts, ptotal = Post.search(
+    users, utotal = User.search(
         g.search_form.q.data, page, current_app.config["POSTS_PER_PAGE"]
     )
-    users, utotal = User.search(
+    posts, ptotal = Post.search(
         g.search_form.q.data, page, current_app.config["POSTS_PER_PAGE"]
     )
     if not ptotal and not utotal:
@@ -202,8 +285,8 @@ def search():
     return render_template(
         "search.html",
         title=_("search"),
-        users=users,
-        utotal=utotal,
+        # users=users,
+        # utotal=utotal,
         posts=posts,
         ptotal=ptotal,
         next_url=next_url,
@@ -268,8 +351,32 @@ def notifications():
 @login_required
 def export_posts():
     if current_user.get_task_in_progress("export_posts"):
-        flash(_("An export task is currently in progress"))
+        flash(_("An export task is currently in progress."))
     else:
         current_user.launch_task("export_posts", _("Exporting posts..."))
         db.session.commit()
     return redirect(url_for("main.user", username=current_user.username))
+
+
+@bp.route("/scrape_forecast/")
+@login_required
+def scrape_forecast():
+    if current_user.get_task_in_progress("scrape_forecast"):
+        flash(_("An export task is currently in progress."))
+    else:
+        current_user.launch_task("scrape_forecast", _("Scraping forecast..."))
+        db.session.commit()
+    next_page = request.args.get("next")
+    if not next_page or url_parse(next_page).netloc != "":
+        next_page = url_for("main.index")
+    return redirect(next_page)
+
+
+from project.tasks import dev_scraping
+
+
+@bp.route("/test_scraping/")
+@login_required
+def test_scraping():
+    dev_scraping()
+    return redirect(url_for("main.index"))

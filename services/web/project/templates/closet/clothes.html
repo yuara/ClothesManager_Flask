@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+  <h1 class="mt-4">{{ _('Clothes') }}</h1>
+  <ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">{{ _('Closet') }}</li>
+    <li class="breadcrumb-item active">{{ _('Clothes') }}</li>
+  </ol>
+  <div class="row">
+    <div class="col-lg-6 col-md-12">
+      <div class="card mb-4">
+        <div class="card-header">
+          <i class="fas fs-tshirts"></i>
+          {{ _('List') }}
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              {% if user_clothes %}
+                <table class="table table-hover">
+                  <tr>
+                    <th>{{ _('Clothes Name') }}</th>
+                    <th>{{ _('Category') }}</th>
+                    <th>{{ _('Addtime') }}</th>
+                  </tr>
+                  {% for name, time,
+                  parent_category,
+                  child_category in user_clothes %}
+                    <tr>
+                      <td>{{ name }}</td>
+                      <td>{{ parent_category }}
+                        /
+                        {{ child_category }}</td>
+                      <td>{{ moment(time).fromNow() }}</td>
+                    </tr>
+                  </tr>
+                {% endfor %}
+              </table>
+              <nav aria-label="...">
+                <ul class="pager">
+                  <li class="previous{% if not prev_url %} disabled{% endif %}">
+                    <a href="{{ prev_url or '#' }}">
+                      <span aria-hidden="true">&larr;</span>
+                      {{ _('Newer clothes') }}
+                    </a>
+                  </li>
+                  <li class="next{% if not next_url %} disabled{% endif %}">
+                    <a href="{{ next_url or '#' }}">
+                      {{ _('Older clothes') }}
+                      <span aria-hidden="true">&rarr;</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6 col-md-12">
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-plus mr-1"></i>
+        {{ _('Add Clothes') }}
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-12">{{ wtf.quick_form(form) }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

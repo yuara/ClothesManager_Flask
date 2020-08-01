@@ -1,0 +1,351 @@
+[{
+  "area_id": 1,
+  "pref_id": 1,
+  "city_id": 1,
+  "area_name": "北海道地方",
+  "pref_name": "道北",
+  "city_name": "稚内市"
+}, {
+  "area_id": 1,
+  "pref_id": 2,
+  "city_id": 1,
+  "area_name": "北海道地方",
+  "pref_name": "道東",
+  "city_name": "網走市"
+}, {
+  "area_id": 1,
+  "pref_id": 3,
+  "city_id": 1,
+  "area_name": "北海道地方",
+  "pref_name": "道南",
+  "city_name": "室蘭市"
+}, {
+  "area_id": 1,
+  "pref_id": 4,
+  "city_id": 1,
+  "area_name": "北海道地方",
+  "pref_name": "道央",
+  "city_name": "札幌市"
+}, {
+  "area_id": 2,
+  "pref_id": 1,
+  "city_id": 1,
+  "area_name": "東北地方",
+  "pref_name": "青森県",
+  "city_name": "青森市"
+}, {
+  "area_id": 2,
+  "pref_id": 2,
+  "city_id": 1,
+  "area_name": "東北地方",
+  "pref_name": "岩手県",
+  "city_name": "盛岡市"
+}, {
+  "area_id": 2,
+  "pref_id": 3,
+  "city_id": 1,
+  "area_name": "東北地方",
+  "pref_name": "宮城県",
+  "city_name": "仙台市"
+}, {
+  "area_id": 2,
+  "pref_id": 4,
+  "city_id": 1,
+  "area_name": "東北地方",
+  "pref_name": "秋田県",
+  "city_name": "秋田市"
+}, {
+  "area_id": 2,
+  "pref_id": 5,
+  "city_id": 1,
+  "area_name": "東北地方",
+  "pref_name": "山形県",
+  "city_name": "山形市"
+}, {
+  "area_id": 2,
+  "pref_id": 6,
+  "city_id": 1,
+  "area_name": "東北地方",
+  "pref_name": "福島県",
+  "city_name": "福島市"
+}, {
+  "area_id": 3,
+  "pref_id": 1,
+  "city_id": 1,
+  "area_name": "関東・甲信地方",
+  "pref_name": "茨城県",
+  "city_name": "水戸市"
+}, {
+  "area_id": 3,
+  "pref_id": 2,
+  "city_id": 1,
+  "area_name": "関東・甲信地方",
+  "pref_name": "栃木県",
+  "city_name": "宇都宮市"
+}, {
+  "area_id": 3,
+  "pref_id": 3,
+  "city_id": 1,
+  "area_name": "関東・甲信地方",
+  "pref_name": "群馬県",
+  "city_name": "前橋市"
+}, {
+  "area_id": 3,
+  "pref_id": 4,
+  "city_id": 1,
+  "area_name": "関東・甲信地方",
+  "pref_name": "埼玉県",
+  "city_name": "さいたま市"
+}, {
+  "area_id": 3,
+  "pref_id": 5,
+  "city_id": 1,
+  "area_name": "関東・甲信地方",
+  "pref_name": "千葉県",
+  "city_name": "千葉市"
+}, {
+  "area_id": 3,
+  "pref_id": 6,
+  "city_id": 1,
+  "area_name": "関東・甲信地方",
+  "pref_name": "東京都",
+  "city_name": "千代田区"
+}, {
+  "area_id": 3,
+  "pref_id": 7,
+  "city_id": 1,
+  "area_name": "関東・甲信地方",
+  "pref_name": "神奈川県",
+  "city_name": "横浜市"
+}, {
+  "area_id": 4,
+  "pref_id": 1,
+  "city_id": 1,
+  "area_name": "北陸地方",
+  "pref_name": "新潟県",
+  "city_name": "新潟市"
+}, {
+  "area_id": 4,
+  "pref_id": 2,
+  "city_id": 1,
+  "area_name": "北陸地方",
+  "pref_name": "富山県",
+  "city_name": "富山市"
+}, {
+  "area_id": 4,
+  "pref_id": 3,
+  "city_id": 1,
+  "area_name": "北陸地方",
+  "pref_name": "石川県",
+  "city_name": "金沢市"
+}, {
+  "area_id": 4,
+  "pref_id": 4,
+  "city_id": 1,
+  "area_name": "北陸地方",
+  "pref_name": "福井県",
+  "city_name": "福井市"
+}, {
+  "area_id": 5,
+  "pref_id": 1,
+  "city_id": 1,
+  "area_name": "東海地方",
+  "pref_name": "山梨県",
+  "city_name": "甲府市"
+}, {
+  "area_id": 5,
+  "pref_id": 2,
+  "city_id": 1,
+  "area_name": "東海地方",
+  "pref_name": "長野県",
+  "city_name": "長野市"
+}, {
+  "area_id": 5,
+  "pref_id": 3,
+  "city_id": 1,
+  "area_name": "東海地方",
+  "pref_name": "岐阜県",
+  "city_name": "岐阜市"
+}, {
+  "area_id": 5,
+  "pref_id": 4,
+  "city_id": 1,
+  "area_name": "東海地方",
+  "pref_name": "静岡県",
+  "city_name": "静岡市"
+}, {
+  "area_id": 5,
+  "pref_id": 5,
+  "city_id": 1,
+  "area_name": "東海地方",
+  "pref_name": "愛知県",
+  "city_name": "名古屋市"
+}, {
+  "area_id": 5,
+  "pref_id": 6,
+  "city_id": 1,
+  "area_name": "東海地方",
+  "pref_name": "三重県",
+  "city_name": "津市"
+}, {
+  "area_id": 6,
+  "pref_id": 1,
+  "city_id": 1,
+  "area_name": "近畿地方",
+  "pref_name": "滋賀県",
+  "city_name": "大津市"
+}, {
+  "area_id": 6,
+  "pref_id": 2,
+  "city_id": 1,
+  "area_name": "近畿地方",
+  "pref_name": "京都府",
+  "city_name": "京都市"
+}, {
+  "area_id": 6,
+  "pref_id": 3,
+  "city_id": 1,
+  "area_name": "近畿地方",
+  "pref_name": "大阪府",
+  "city_name": "大阪市"
+}, {
+  "area_id": 6,
+  "pref_id": 4,
+  "city_id": 1,
+  "area_name": "近畿地方",
+  "pref_name": "兵庫県",
+  "city_name": "神戸市"
+}, {
+  "area_id": 6,
+  "pref_id": 5,
+  "city_id": 1,
+  "area_name": "近畿地方",
+  "pref_name": "奈良県",
+  "city_name": "奈良市"
+}, {
+  "area_id": 6,
+  "pref_id": 6,
+  "city_id": 1,
+  "area_name": "近畿地方",
+  "pref_name": "和歌山県",
+  "city_name": "和歌山市"
+}, {
+  "area_id": 7,
+  "pref_id": 1,
+  "city_id": 1,
+  "area_name": "中国地方",
+  "pref_name": "鳥取県",
+  "city_name": "鳥取市"
+}, {
+  "area_id": 7,
+  "pref_id": 2,
+  "city_id": 1,
+  "area_name": "中国地方",
+  "pref_name": "島根県",
+  "city_name": "松江市"
+}, {
+  "area_id": 7,
+  "pref_id": 3,
+  "city_id": 1,
+  "area_name": "中国地方",
+  "pref_name": "岡山県",
+  "city_name": "岡山市"
+}, {
+  "area_id": 7,
+  "pref_id": 4,
+  "city_id": 1,
+  "area_name": "中国地方",
+  "pref_name": "広島県",
+  "city_name": "広島市"
+}, {
+  "area_id": 7,
+  "pref_id": 5,
+  "city_id": 1,
+  "area_name": "中国地方",
+  "pref_name": "山口県",
+  "city_name": "下関市"
+}, {
+  "area_id": 8,
+  "pref_id": 1,
+  "city_id": 1,
+  "area_name": "四国地方",
+  "pref_name": "徳島県",
+  "city_name": "徳島市"
+}, {
+  "area_id": 8,
+  "pref_id": 2,
+  "city_id": 1,
+  "area_name": "四国地方",
+  "pref_name": "香川県",
+  "city_name": "高松市"
+}, {
+  "area_id": 8,
+  "pref_id": 3,
+  "city_id": 1,
+  "area_name": "四国地方",
+  "pref_name": "愛媛県",
+  "city_name": "松山市"
+}, {
+  "area_id": 8,
+  "pref_id": 4,
+  "city_id": 1,
+  "area_name": "四国地方",
+  "pref_name": "高知県",
+  "city_name": "高知市"
+}, {
+  "area_id": 9,
+  "pref_id": 1,
+  "city_id": 1,
+  "area_name": "九州地方",
+  "pref_name": "福岡県",
+  "city_name": "福岡市"
+}, {
+  "area_id": 9,
+  "pref_id": 2,
+  "city_id": 1,
+  "area_name": "九州地方",
+  "pref_name": "佐賀県",
+  "city_name": "佐賀市"
+}, {
+  "area_id": 9,
+  "pref_id": 3,
+  "city_id": 1,
+  "area_name": "九州地方",
+  "pref_name": "長崎県",
+  "city_name": "長崎市"
+}, {
+  "area_id": 9,
+  "pref_id": 4,
+  "city_id": 1,
+  "area_name": "九州地方",
+  "pref_name": "熊本県",
+  "city_name": "熊本市"
+}, {
+  "area_id": 9,
+  "pref_id": 5,
+  "city_id": 1,
+  "area_name": "九州地方",
+  "pref_name": "大分県",
+  "city_name": "大分市"
+}, {
+  "area_id": 9,
+  "pref_id": 6,
+  "city_id": 1,
+  "area_name": "九州地方",
+  "pref_name": "宮崎県",
+  "city_name": "宮崎市"
+}, {
+  "area_id": 9,
+  "pref_id": 7,
+  "city_id": 1,
+  "area_name": "九州地方",
+  "pref_name": "鹿児島県",
+  "city_name": "鹿児島市"
+}, {
+  "area_id": 10,
+  "pref_id": 1,
+  "city_id": 1,
+  "area_name": "沖縄地方",
+  "pref_name": "沖縄県",
+  "city_name": "那覇市"
+}]

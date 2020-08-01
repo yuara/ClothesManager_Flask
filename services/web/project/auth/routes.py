@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from werkzeug.urls import url_parse
 from flask_login import current_user, login_user, logout_user
 from flask_babel import _
@@ -10,8 +10,17 @@ from project.auth.forms import (
     ResetPasswordRequestForm,
     ResetPasswordForm,
 )
-from project.models import User
+from project.models import User, Location
 from project.auth.email import send_password_reset_email
+
+
+@bp.route("/_get_locations/")
+def _get_locations():
+    area = request.args.get("area", 1, type=int)
+    locations = [
+        (x.id, x.pref_name) for x in Location.query.filter_by(area_id=area).all()
+    ]
+    return jsonify(locations)
 
 
 @bp.route("/login/", methods=["GET", "POST"])
@@ -29,7 +38,7 @@ def login():
         if not next_page or url_parse(next_page).netloc != "":
             next_page = url_for("main.index")
         return redirect(next_page)
-    return render_template("auth/login.html", title=_("sign in"), form=form)
+    return render_template("auth/login.html", title=_("Sign in"), form=form)
 
 
 @bp.route("/logout/")
@@ -42,15 +51,20 @@ def logout():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for("main.index"))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
+    form = RegistrationForm(form_name="RegistrationForm")
+    if request.method == "GET":
+        return render_template("auth/register.html", title=_("Register"), form=form)
+    if form.validate_on_submit() and request.form["form_name"] == "RegistrationForm":
+        user = User(
+            username=form.username.data,
+            email=form.email.data,
+            location_id=form.location_pref.data,
+        )
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
         flash(_("Registered the new user successfully!"))
         return redirect(url_for("auth.login"))
-    return render_template("auth/register.html", title=_("Register"), form=form)
 
 
 @bp.route("/reset_password_request/", methods=["GET", "POST"])
