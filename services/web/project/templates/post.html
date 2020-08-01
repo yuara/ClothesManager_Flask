@@ -1,34 +1,17 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-<h1 class="mt-4">{{ _('Search Results') }}</h1>
-<ol class="breadcrumb mb-4">
-  <li class="breadcrumb-item active">{{ _('Search Results') }}</li>
-</ol>
-{% if utotal %}
-<h3>{{ _('Results for Users') }}</h3>
-{% for user in users %}
-<table class="table table-hover">
-  <tr>
-    <td width="30px">
-      <a href="{{ url_for('main.user', username=user.username) }}">
-        <img src="{{ user.avatar(30) }}">
-      </a>
-    </td>
-    <td>
-      <a href="{{ url_for('main.user', username=user.username) }}">
-        {{ user.username }}
-      </a>
-    </td>
-  </tr>
-</table>
-{% endfor %}
-<br>
-{% endif %}
+  <h1 class="mt-4">{{ _('Post') }}</h1>
+  <ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item">{{ _('User') }}</li>
+    <li class="breadcrumb-item active">{{ _('Post') }}</li>
+  </ol>
 
-{% if ptotal %}
-<h3>{{ _('Results for Posts') }}</h3>
-{% for post in posts %}
+{% if post_form %}
+  {{ wtf.quick_form(post_form) }}
+  <br>
+{% endif %}
 {% for post in posts %}
 <table class="table table-hover">
   <tr>
@@ -63,20 +46,19 @@
 </table>
 {% endfor %}
 <nav aria-label="...">
-  <ul class="pager">
-    <li class="previous{% if not prev_url %} disabled{% endif %}">
-      <a href="{{ prev_url or '#' }}">
-        <span aria-hidden="true">&larr;</span>
-        {{ _('Previous results') }}
+  <ul class="pagination justify-content-center">
+    <li class="page-item {% if not prev_url %} disabled{% endif %} text-left">
+      <a class="page-link" href="{{ prev_url or '#'}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
       </a>
     </li>
-    <li class="next{% if not next_url %} disabled{% endif %}">
-      <a href="{{ next_url or '#' }}">
-        {{ _('Next results') }}
-        <span aria-hidden="true">&rarr;</span>
+    <li class="page-item {% if not next_url %} disabled{% endif %}">
+      <a class="page-link" href="{{ next_url or '#'}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
       </a>
     </li>
   </ul>
 </nav>
-{% endif %}
 {% endblock %}
