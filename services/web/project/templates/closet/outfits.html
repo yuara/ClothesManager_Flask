@@ -70,17 +70,17 @@
                     {% endfor %}
                   </table>
                   <nav aria-label="...">
-                    <ul class="pager">
-                      <li class="previous{% if not prev_url %} disabled{% endif %}">
-                        <a href="{{ prev_url or '#' }}">
-                          <span aria-hidden="true">&larr;</span>
-                          {{ _('Newer clothes') }}
+                    <ul class="pagination justify-content-center">
+                      <li class="page-item {% if not prev_url %} disabled{% endif %} text-left">
+                        <a class="page-link" href="{{ prev_url or '#'}}" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                          <span class="sr-only">Previous</span>
                         </a>
                       </li>
-                      <li class="next{% if not next_url %} disabled{% endif %}">
-                        <a href="{{ next_url or '#' }}">
-                          {{ _('Older clothes') }}
-                          <span aria-hidden="true">&rarr;</span>
+                      <li class="page-item {% if not next_url %} disabled{% endif %}">
+                        <a class="page-link" href="{{ next_url or '#'}}" aria-label="Next">
+                          <span aria-hidden="true">&raquo;</span>
+                          <span class="sr-only">Next</span>
                         </a>
                       </li>
                     </ul>
