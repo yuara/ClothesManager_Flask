@@ -1,4 +1,5 @@
 {% extends 'bootstrap/base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block title %}
   Welcome ClothesManager
@@ -17,9 +18,11 @@
   <div class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-light bg-light">
       <a class="navbar-brand" href="{{ url_for('main.home') }}">Clothes Manager</a>
-      <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#">
-        <i class="fas fa-bars"></i>
-      </button>
+      {% if not current_user.is_anonymous %}
+        <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#">
+          <i class="fas fa-bars"></i>
+        </button>
+      {% endif %}
       <!-- Navbar Search-->
       <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
         <div class="input-group">
@@ -40,10 +43,10 @@
             <i class="fas fa-user fa-fw"></i>
           </a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-            <a class="dropdown-item" href="{{ url_for('main.home') }}">{{ _('Home') }}</a>
-
+            <a class="dropdown-item" data-toggle="modal" data-target="#login_modal">
+              {{ _('Login') }}</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{{ url_for('auth.login') }}">{{ _('Login') }}</a>
+            <a class="dropdown-item" data-toggle="modal" data-target="#signin_modal">{{ _('Sign In') }}</a>
           </div>
         </li>
       </ul>
@@ -78,70 +81,178 @@
 {% endblock %}
 
 {% block content %}
+
   <div class="home_mt">
     <main>
       <div class="container-fluid">
-        <div class="home-top-box">
+        {% if current_user.is_authenticated %}
+          {% with tasks = current_user.get_tasks_in_progress() %}
+          {% if tasks %}
+            {% for task in tasks %}
+              {% if task.name == 'scrape_forecast' %}
+                <div class="alert alert-info" role="alert">
+                  {{ task.description }}
+                </div>
+              {% else %}
+                <div class="alert alert-success" role="alert">
+                  {{ task.description }}
+                  <span id="{{ task.id }}-progress">{{ task.get_progress() }}</span>%
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+          {% endwith %}
+        {% endif %}
+
+        {% block messages_notif %}
+          {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+          {% endwith %}
+        {% endblock %}
+
+        <div class="home-box top">
+
+          <div class="top-title">
+            What's Today's Clothes?
+          </div>
           <div class="top-img">
-            <img src="{{ url_for('static', filename='img/hat_choosing.jpg') }}" alt="">
+            <img src="{{ url_for('static', filename='img/outfit-img.jpg') }}" alt="">
           </div>
           <div class="top-line-pad line-letter">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            This Application named "ClothesManager" can help to deside your outfits today.<br>
+            You just only record your all clothes in the closet.<br>
+            ClothesManager suggests some clothes and you pick up what you want to wear from them.<br>
+            You can also keep outfits in this app then you won't miss your favorite outfits!
           </div>
         </div>
+        <!-- home-box -->
 
-        <div class="home-line-box">
-          <div class="top-line">
-            <div class="home-img">
-              <img src="{{ url_for('static', filename='img/ver_closet.jpg') }}" alt="closet img">
-            </div>
-
-            <div class="home-line line-box-right">
-              <div class="line-letter">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-              </div>
-            </div>
+        <div class="home-box middle">
+          <div class="middle-img">
+            <img src="{{ url_for('static', filename='img/hat_choosing.jpg') }}" alt="">
           </div>
-          <!-- top-line -->
-        </div>
-        <!-- home-line-box -->
-
-        <div class="home-line-box">
-          <div class="middle-line">
-            <div class="home-line line-box-left">
-              <div class="line-letter">
-                laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-              </div>
-            </div>
-            <div class="home-img img-box-right">
-              <img src="{{ url_for('static', filename='img/standing.jpg') }}" alt="closet img">
-            </div>
+          <div class="middle-line-pad line-letter">
+            In the life, we buy thousand of chothes and choose today's ones from them.<br><br>
+            What can have you do that?<br>
+            How important is the schedule? How offten do you wear the clothes? or How is the today's weather?<br><br>
+            There are many factors!<br><br>
+            Have you experienced when you just get out of your place you feel hot or cold so much even though you checked a forecast?<br>
+            You don't need to think about that with this ClothesManager!
           </div>
-          <!-- middle-line -->
         </div>
-        <!-- home-line-box -->
+        <!-- home-box -->
 
-        <div class="home-line-box">
-          <div class="bottom-line">
-            <div class="home-img">
-              <img src="{{ url_for('static', filename='img/white_wall_building.jpg') }}" alt="closet img">
-            </div>
-
-            <div class="home-line line-box-right">
-              <div class="line-letter">
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu  cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-              </div>
-            </div>
+        <div class="home-content-line-box box-ord">
+          <div class="item"><img src="{{ url_for('static', filename='img/ver-hang-outfit.jpg') }}" alt="closet img"></div>
+          <div class="item line-letter">
+            <h4>Cold Condition and Hot Fashion</h4>
+            Take information about weather and clothes index value from
+            <a href="https:www.tenki.jp">Tenki.jp</a>.<br>
+            Automatically ClothesManager tells you confatable clothes with the clothes index value.
           </div>
-          <!-- bottom-line -->
         </div>
-        <!-- home-line-box -->
+        <!-- home-content-line-box -->
+
+        <div class="home-content-line-box box-rev">
+          <div class="item"><img src="{{ url_for('static', filename='img/standing.jpg') }}" alt="closet img"></div>
+          <div class="item line-letter">
+            <h4>Dress for Success</h4>
+            You can put information of your clothes and just choose today's clothes with your feeling. You don't care about weather and tempurature, app does for you!
+          </div>
+        </div>
+        <!-- home-content-line-boxbox-rev -->
+
+        <div class="home-content-line-box box-ord">
+          <div class="item"><img src="{{ url_for('static', filename='img/white_wall_building.jpg') }}" alt="closet img"></div>
+          <div class="item line-letter">
+            <h4>Wear your Smile with Confidence</h4>
+            <p>Donec sed odio dui. Nullam quis risus eget urna mollis ornare vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
+          </div>
+        </div>
+        <!-- home-content-line-box -->
 
       </div>
       <!-- container-fluid -->
     </main>
   </div>
   <!-- home-mt -->
+
+  <!-- Login Modal -->
+  <div class="modal fade" id="login_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle">Login</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="post" novalidate="novalidate">
+            {{ form.hidden_tag() }}
+            <p>
+              {{ form.username.label }}<br>
+              {{ form.username(size=32) }}<br>
+              {% for error in form.username.errors %}
+                <span style="color: red;">{{ error }}</span>
+              {% endfor %}
+            </p>
+            <p>
+              {{ form.password.label }}<br>
+              {{ form.password(size=32) }}<br>
+              {% for error in form.password.errors %}
+                <span style="color: red;">{{ error }}</span>
+              {% endfor %}
+            </p>
+            <p>{{ form.remember_me() }}
+              {{ form.remember_me.label }}</p>
+            <p>{{ form.submit() }}</p>
+          </form>
+          <p>New User? Click
+            <a href="{{ url_for('auth.register') }}">Here</a>
+            to Register!</p>
+          <p>
+            Forgot Your Password? Click
+            <a href="{{ url_for('auth.reset_password_request') }}">Here</a>
+            to Reset It
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Login Modal -->
+
+  <!-- Sign In Modal -->
+  <div class="modal fade" id="signin_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle">Sign In</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4">
+              {{ wtf.quick_form(signin_form) }}
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Sign In Modal -->
 
 {% endblock %}
 
@@ -164,7 +275,6 @@
   <script>
     let task_scrape_forecast_url = "{{ url_for('main.scrape_forecast') }}"
   </script>
-
 
   <script src="{{ url_for('static', filename='js/translate.js') }}"></script>
   <script src="{{ url_for('static', filename='js/popup.js') }}"></script>
