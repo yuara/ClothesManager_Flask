@@ -5,10 +5,13 @@ import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 from project import create_app, db
-from project.models import Forecast, Location, ClothesIndex
+
+# from project.models import Forecast, Location, ClothesIndex
+import pymysql
 
 
 class ForecastItem(scrapy.Item):
+    area = scrapy.Field()
     prefecture = scrapy.Field()
     clothes_info = scrapy.Field()
     weather = scrapy.Field()
@@ -35,6 +38,7 @@ class ForecastSpider(CrawlSpider):
         item = ForecastItem()
 
         place = response.css("#delimiter ol li a span::text").extract()
+        item["area"] = place[-2]
         item["prefecture"] = place[-1]
 
         item["update_time"] = response.css(".date-time ::text").extract_first()
@@ -57,11 +61,16 @@ class ForecastSpider(CrawlSpider):
 
 class ForecastPipeline(object):
     def __init__(self):
-        app = create_app()
-        app.app_context().push()
-        self.progress = 0
-        self.sccess = 0
-        self.err = 0
+        self.connection = pymysql.connect(
+            host="db",
+            user="ClothesManager",
+            password="cm",
+            db="cmdb",
+            charset="utf8mb4",
+            cursorclass=pymysql.cursors.DictCursor,
+        )
+        self.cursor = self.connection.cursor()
+        self.counter = 0
 
     def process_item(self, item, spider):
 
@@ -72,25 +81,35 @@ class ForecastPipeline(object):
             year=today.year, month=today.month, day=today.day, hour=update_time
         )
 
+        area = item["area"]
         prefecture = item["prefecture"]
         city = item["weather_city"][0]
 
-        location = Location.query.filter_by(
-            pref_name=prefecture, city_name=city
-        ).first()
+        location_sql = "SELECT * FROM location WHERE area_name=%s AND pref_name=%s AND city_name=%s"
+        print(location_sql)
+        self.cursor.execute(location_sql, (area, prefecture, city))
+        # location_sql = "SELECT TOP (1) * FROM location WHERE area_name=%s AND pref_name=%s AND city_name=%s ;"
+        # print(location_sql)
+        # self.cursor.execute(location_sql, (area, prefecture, city))
+        print("got data")
+        location = self.cursor.fetchone()
+        print(f"***fetch {location['id']}****")
+
+        # location = Location.query.filter_by(
+        #     pref_name=prefecture, city_name=city
+        # ).first()
         if location is None:
-            self.err += 1
-            self.progress += 1
-            print(f"sccess/error/progress: {self.sccess}/{self.err}/{self.progress}")
             raise scrapy.exceptions.DropItem("Invalid location.")
 
-        latest_forecast_data = Forecast.query.filter_by(
-            location_id=location.id, update_time=update_time
-        ).first()
+        latest_forecast_sql = (
+            "SELECT * FROM forecast WHERE location_id=%s AND update_time=%s"
+        )
+        self.cursor.execute(latest_forecast_sql, (location["id"], update_time))
+        latest_forecast_data = self.cursor.fetchone()
+        # latest_forecast_data = Forecast.query.filter_by(
+        #     location_id=location.id, update_time=update_time
+        # ).first()
         if latest_forecast_data:
-            self.err += 1
-            self.progress += 1
-            print(f"success/error/progress: {self.sccess}/{self.err}/{self.progress}")
             raise scrapy.exceptions.DropItem("Already inserted this items.")
 
         else:
@@ -108,29 +127,46 @@ class ForecastPipeline(object):
 
             i = clothes_city_list.index(city)
             index = clothes_index_list[i]
-            clothes_index = ClothesIndex.query.filter_by(value=index).first()
+
+            clothes_index_sql = "SELECT id FROM clothes_index WHERE value=%s"
+            self.cursor.execute(clothes_index_sql, (index,))
+            clothes_index = self.cursor.fetchone()
+
+            # clothes_index = ClothesIndex.query.filter_by(value=index).first()
             if clothes_index is None:
-                self.err += 1
-                self.progress += 1
-                print(
-                    f"success/error/progress: {self.sccess}/{self.err}/{self.progress}"
-                )
                 raise scrapy.exceptions.DropItem("Invalid clothes index")
 
-            clothes_index_id = clothes_index.id
+            # location_id = location.id
+            # clothes_index_id = clothes_index.id
 
-            forecast = Forecast(
-                location_id=location.id,
-                weather=weather,
-                highest_temp=highest_temp,
-                lowest_temp=lowest_temp,
-                rain_chance=rain_chance,
-                clothes_index_id=clothes_index_id,
-                update_time=update_time,
+            location_id = location["id"]
+            clothes_index_id = clothes_index["id"]
+
+            # forecast = Forecast(
+            #     location_id=location_id,
+            #     weather=weather,
+            #     highest_temp=highest_temp,
+            #     lowest_temp=lowest_temp,
+            #     rain_chance=rain_chance,
+            #     clothes_index_id=clothes_index_id,
+            #     update_time=update_time,
+            # )
+
+            insert_sql = "INSERT INTO forecast (location_id, weather, highest_temp, lowest_temp, rain_chance, clothes_index_id, update_time) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+
+            self.cursor.execute(
+                insert_sql,
+                (
+                    location_id,
+                    weather,
+                    highest_temp,
+                    lowest_temp,
+                    rain_chance,
+                    clothes_index_id,
+                    update_time,
+                ),
             )
-            db.session.add(forecast)
-            db.session.commit()
+            self.connection.commit()
+            self.counter += 1
 
-            self.sccess += 1
-            self.progress += 1
-            return f"success/error/progress: {self.sccess}/{self.err}/{self.progress}"
+            return f"Scraped {self.counter}"

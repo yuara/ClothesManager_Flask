@@ -6,6 +6,7 @@ from flask import render_template, jsonify
 from rq import get_current_job
 from scrapy.crawler import CrawlerRunner, CrawlerProcess
 from scrapy.settings import Settings
+from scrapy.utils.log import configure_logging
 from project import create_app, db
 from project.models import User, Post, Task
 from project.email import send_email
@@ -80,28 +81,15 @@ def _get_spider_settings():
     return settings
 
 
-def scrape_forecast():
+def scrape_forecast(user_id):
     def scrape_done(_):
         _set_task_progress(100)
         reactor.stop()
 
     _set_task_progress(0)
+    configure_logging({"LOG_FORMAT": "%(levelname)s: %(message)s"})
     crawl_runner = CrawlerRunner(_get_spider_settings())
     result = crawl_runner.crawl(ForecastSpider)
     result.addBoth(scrape_done)
 
     reactor.run()
-
-
-import crochet
-from scrapy.utils.log import configure_logging
-
-crochet.setup()
-
-
-@crochet.run_in_reactor
-def dev_scraping():
-    configure_logging({"LOG_FORMAT": "%(levelname)s: %(message)s"})
-
-    crawl_runner = CrawlerRunner(_get_spider_settings())
-    crawl_runner.crawl(ForecastSpider)

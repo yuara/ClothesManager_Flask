@@ -30,8 +30,9 @@ $(function() {
     );
   }, 10000);
 });
+
 $(function() {
   setInterval(function() {
     $.ajax(task_scrape_forecast_url);
-  }, 600000);
+  }, 5400000);
 });
