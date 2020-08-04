@@ -93,11 +93,11 @@
               <div class="card">
                 <div class="card-header">
                   <i class="fas fa-dice-one mr-1"></i>
-                  Outwears
+                  Outerwears
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
-                    {% if outwears %}
+                    {% if outerwears %}
                       <table class="table table-hover" id="dataTable">
                         <thead>
                           <tr>
@@ -106,10 +106,10 @@
                           </tr>
                         </thead>
                         <tbody>
-                          {% for outwear in outwears %}
+                          {% for outerwear in outerwears %}
                             <tr>
-                              <td>{{ outwear.name }}</td>
-                              <td>{{ outwear.timestamp }}</td>
+                              <td>{{ outerwear.name }}</td>
+                              <td>{{ outerwear.timestamp }}</td>
                             </tr>
                           {% endfor %}
                         </tbody>

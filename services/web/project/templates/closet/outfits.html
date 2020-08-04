@@ -22,14 +22,14 @@
                   <table class="table table-hover">
                     <tr>
                       <th>{{ _('Outfit Name') }}</th>
-                      <th>{{ _('Jackets') }}</th>
+                      <th>{{ _('Outerwears') }}</th>
                       <th>{{ _('Tops 1') }}</th>
                       <th>{{ _('Tops 2') }}</th>
                       <th>{{ _('Bottoms') }}</th>
                       <th>{{ _('Settime') }}</th>
                     </tr>
                     {% for name, time,
-                    jacket,
+                    outerwear,
                     top_1,
                     top_2,
                     bottom in user_outfits %}
@@ -37,8 +37,8 @@
                         <td>{{ name }}</td>
 
                         <td>
-                          {% if jacket %}
-                            {{ jacket }}
+                          {% if outerwear %}
+                            {{ outerwear }}
                           {% else %}
                             ----------
                           {% endif %}

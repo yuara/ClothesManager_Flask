@@ -36,6 +36,8 @@ class RegistrationForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
+
+        # Set choises of dropdown for location_area and location_pref
         self.location_area.choices = (
             db.session.query(Location.area_id, Location.area_name)
             .distinct(Location.area_name)
