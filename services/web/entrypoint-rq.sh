@@ -9,9 +9,4 @@ while true; do
 done
 flask translate compile
 
-sleep 20
-
-curl http://scrapyd:6800/schedule.json -d project=scraping -d spider=forecast
-
-cron -f &
 exec "$@"

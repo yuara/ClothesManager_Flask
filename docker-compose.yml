@@ -49,7 +49,9 @@ services:
       - 6379:6379
 
   rq-worker:
-    build: ./services/web/
+    build:
+      context: ./services/web/
+      dockerfile: "Dockerfile-rq"
     command: rq worker -u redis://redis:6379 ClothesManager-tasks
     volumes:
       - ./services/web/:/usr/src/app/
