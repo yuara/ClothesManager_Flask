@@ -22,17 +22,13 @@
         <i class="fas fa-bars"></i>
       </button>
       <!-- Navbar Search-->
-      <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-        <div class="input-group">
           {% if g.search_form %}
-            <form class="navbar-form navbar-left" method="get" action="{{ url_for('main.search') }}">
+            <form class="navbar-form navbar-left d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0" method="get" action="{{ url_for('main.search') }}">
               <div class="form-group">
                 {{ g.search_form.q(size=20, class='form-control', placeholder=g.search_form.q.label.text) }}
               </div>
             </form>
             {% endif %}
-        </div>
-      </form>
       <!-- Navbar-->
       {% if current_user.is_anonymous %}
         <ul class="navbar-nav ml-auto ml-md-0">

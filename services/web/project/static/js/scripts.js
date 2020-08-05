@@ -20,4 +20,7 @@
         $("body").toggleClass("sb-sidenav-toggled");
     });
 
+    $(function () {
+      $('#myList a:last-child').tab('show')
+    });
 })(jQuery);
