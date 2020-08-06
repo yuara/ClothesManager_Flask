@@ -23,7 +23,11 @@
                 </tr>
                 <tr>
                   <th>{{ _('About Me') }}</th>
-                  <td>{{ user.about_me }}</td>
+                  {% if user.about_me %}
+                    <td>{{ user.about_me }}</td>
+                  {% else %}
+                    <td>----------</td>
+                  {% endif %}
                 </tr>
                 <tr>
                   <th>{{ _('Last seen on') }}</th>
@@ -38,23 +42,24 @@
                       <td>{{ _('Not Set Your Location Yet') }}</td>
                     {% endif %}
                   </tr>
-                  {% else %}
-                  <tr>
-                    <th>{{ _('Followers') }}</th>
-                    <td>{{ _('%(count)d followers', count=user.followers.count()) }}</td>
-                  </tr>
-                  <tr>
-                    <th>{{ _('Followed') }}</th>
-                    <td>{{ _('%(count)d following', count=user.followed.count()) }}</td>
-                  </tr>
-                  <tr>
-                    <th>{{ _('Clothes') }}</th>
-                    <td>{{ _('%(count)d clothes', count=user.own_clothes.count()) }}</td>
-                  </tr>
-                  <tr>
-                    <th>{{ _('Outfits') }}</th>
-                    <td>{{ _('%(count)d outfits', count=user.outfits.count()) }}</td>
-                  </tr>
+                {% endif %}
+                <tr>
+                  <th>{{ _('Followers') }}</th>
+                  <td>{{ _('%(count)d followers', count=user.followers.count()) }}</td>
+                </tr>
+                <tr>
+                  <th>{{ _('Followed') }}</th>
+                  <td>{{ _('%(count)d following', count=user.followed.count()) }}</td>
+                </tr>
+                <tr>
+                  <th>{{ _('Clothes') }}</th>
+                  <td>{{ _('%(count)d clothes', count=user.own_clothes.count()) }}</td>
+                </tr>
+                <tr>
+                  <th>{{ _('Outfits') }}</th>
+                  <td>{{ _('%(count)d outfits', count=user.outfits.count()) }}</td>
+                </tr>
+                {% if user != current_user %}
                   {% if not current_user.is_following(user) %}
                     <tr>
                       <th>
@@ -70,14 +75,14 @@
                       <td></td>
                     </tr>
                   {% endif %}
-                {% endif %}
-                {% if user != current_user %}
-                  <tr>
-                    <th>
-                      <a href="{{ url_for('main.send_message', recipient=user.username) }}">{{ _('Send private message') }}</a>
-                    </th>
-                    <td></td>
-                  </tr>
+                  {% if user != current_user %}
+                    <tr>
+                      <th>
+                        <a href="{{ url_for('main.send_message', recipient=user.username) }}">{{ _('Send private message') }}</a>
+                      </th>
+                      <td></td>
+                    </tr>
+                  {% endif %}
                 {% endif %}
               </table>
             </div>
@@ -86,17 +91,16 @@
       </div>
     </div>
 
-
-      <div class="col-lg-4 col-md-12">
-        <div class="card mb-4">
-          <div class="card-header">
-            <i class="fas fa-table mr-1"></i>
-            {{ _('Post') }}
-          </div>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-md-12">
-                {% if posts %}
+    <div class="col-lg-4 col-md-12">
+      <div class="card mb-4">
+        <div class="card-header">
+          <i class="fas fa-table mr-1"></i>
+          {{ _('Post') }}
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              {% if posts %}
                 {% for post in posts %}
                   <table class="table table-hover">
                     <tr>
@@ -146,17 +150,17 @@
                     </li>
                   </ul>
                 </nav>
-                {% else %}
+              {% else %}
                 {{ _('No Posts Yet') }}
-                {% endif %}
+              {% endif %}
 
-              </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-    {% if user==current_user and edit_form %}
+    {% if user == current_user and edit_form %}
       <div class="col-lg-4 col-md-12">
         <div class="card mb-4">
           <div class="card-header">

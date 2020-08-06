@@ -1,0 +1,5 @@
+pymysql==0.9.3
+scrapy==2.2.0
+scrapyd==1.2.0
+scrapyd-client==1.1.0
+Twisted==18.9.0

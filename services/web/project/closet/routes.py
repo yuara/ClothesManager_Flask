@@ -24,6 +24,7 @@ from project.models import (
 from project.closet import bp
 
 
+# lead to a child category dropdown with parent_id you selected
 @bp.route("/_get_categories/")
 def _get_categories():
     parent = request.args.get("parent", 1, type=int)
@@ -36,16 +37,20 @@ def _get_categories():
 @bp.route("/clothes/", methods=["POST", "GET"])
 @login_required
 def clothes():
+    # Add Clothes Form
     form = ClothesForm(form_name="ClothesForm")
     if form.validate_on_submit() and request.form["form_name"] == "ClothesForm":
         if form.name.data:
             _name = form.name.data
         else:
+            # the added clothes will be named like t-shirt 1, pants 1
+            # if not input the name form
             _category = Category.query.filter_by(id=form.child_category.data).first()
             _count = (
                 current_user.own_clothes.filter_by(category_id=_category.id).count() + 1
             )
             _name = f"{_category.child_name} {_count}"
+
         clothes = Clothes(
             name=_name,
             note=form.note.data,
@@ -56,6 +61,7 @@ def clothes():
         db.session.commit()
         flash(_("You added your clothes!"))
         return redirect(url_for("closet.clothes"))
+
     page = request.args.get("page", 1, type=int)
     user_clothes = (
         db.session.query(
@@ -116,22 +122,26 @@ def add_clothes():
 @bp.route("/outfits/", methods=["POST", "GET"])
 @login_required
 def outfits():
+    # Set Outfit Form
     form = OutfitForm()
     if form.validate_on_submit():
         if form.name.data:
             _name = form.name.data
         else:
+            # the added outfit will be named like outfit 1, outfit 2
+            # if not input the name form
             _count = current_user.outfits.count() + 1
             _name = f"Outfit {_count}"
 
-        _jacket = None if form.jackets.data == 0 else form.jackets.data
+        # If not set outerwears and tops 2, put None
+        _outerwear = None if form.outerwears.data == 0 else form.outerwears.data
         _top_2 = None if form.tops_2.data == 0 else form.tops_2.data
 
         outfit = Outfit(
             name=_name,
             note=form.note.data,
             owner_id=current_user.id,
-            jacket_id=_jacket,
+            outerwear_id=_outerwear,
             top_1_id=form.tops_1.data,
             top_2_id=_top_2,
             bottom_id=form.bottoms.data,
@@ -141,6 +151,7 @@ def outfits():
         flash(_("You set your outfit!!"))
         return redirect(url_for("closet.outfits"))
 
+    # if a user has clothes
     _clothes = current_user.own_clothes.count()
     has_clothes = True if _clothes > 0 else False
 
@@ -154,7 +165,7 @@ def outfits():
         db.session.query(
             Outfit.name, Outfit.timestamp, c1.name, c2.name, c3.name, c4.name
         )
-        .outerjoin(c1, c1.id == Outfit.jacket_id)
+        .outerjoin(c1, c1.id == Outfit.outerwear_id)
         .outerjoin(c2, c2.id == Outfit.top_1_id)
         .outerjoin(c3, c3.id == Outfit.top_2_id)
         .outerjoin(c4, c4.id == Outfit.bottom_id)
@@ -195,14 +206,14 @@ def set_outfit():
             _count = current_user.outfits.count() + 1
             _name = f"Outfit {_count}"
 
-        _jacket = None if form.jackets.data == 0 else form.jackets.data
+        _outerwear = None if form.outerwears.data == 0 else form.outerwears.data
         _top_2 = None if form.tops_2.data == 0 else form.tops_2.data
 
         outfit = Outfit(
             name=_name,
             note=form.note.data,
             owner_id=current_user.id,
-            jacket_id=_jacket,
+            outerwear_id=_outerwear,
             top_1_id=form.tops_1.data,
             top_2_id=_top_2,
             bottom_id=form.bottoms.data,

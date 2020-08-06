@@ -18,8 +18,10 @@ class EditProfileForm(FlaskForm):
 
     def __init__(self, original_username, *args, **kwargs):
         super(EditProfileForm, self).__init__(*args, **kwargs)
+        # Show a user name in placeholder
         self.original_username = original_username
 
+        # Set dropdown choices
         self.location_area.choices = (
             db.session.query(Location.area_id, Location.area_name)
             .distinct(Location.area_name)

@@ -18,6 +18,7 @@ services:
     build: ./services/mysql/
     volumes:
       - ./services/mysql/mysql_data:/var/lib/mysql
+    hostname: db
     environment:
       - MYSQL_ROOT_PASSWORD=yes
       - MYSQL_DATABASE=cmdb
@@ -48,7 +49,9 @@ services:
       - 6379:6379
 
   rq-worker:
-    build: ./services/web/
+    build:
+      context: ./services/web/
+      dockerfile: "Dockerfile-rq"
     command: rq worker -u redis://redis:6379 ClothesManager-tasks
     volumes:
       - ./services/web/:/usr/src/app/
@@ -57,6 +60,15 @@ services:
     depends_on:
       - db
       - redis
+
+  scrapyd:
+    build: ./services/scrapyd
+    image: scrapyd
+    ports:
+      - 6800:6800
+    depends_on:
+      - db
+    restart: always
 
 volumes:
   mysql_data:

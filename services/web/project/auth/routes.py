@@ -13,7 +13,7 @@ from project.auth.forms import (
 from project.models import User, Location
 from project.auth.email import send_password_reset_email
 
-
+# Get area_id from parent dropdown and show perf in child dropdown.
 @bp.route("/_get_locations/")
 def _get_locations():
     area = request.args.get("area", 1, type=int)
@@ -33,6 +33,8 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash(_("Invalid username or password"))
             return redirect(url_for("auth.login"))
+
+        # You login here
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get("next")
         if not next_page or url_parse(next_page).netloc != "":
@@ -74,6 +76,7 @@ def reset_password_request():
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
+        # send a email to reset password if the user is correct.
         if user:
             send_password_reset_email(user)
         flash(_("Check your email for the instructions to reset your password"))
@@ -91,6 +94,7 @@ def reset_passowrd(token):
     if not user:
         return redirect(url_for("main.index"))
     form = ResetPasswordForm()
+    # reset passowrd
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()

@@ -17,7 +17,7 @@ class LoginForm(FlaskForm):
     username = StringField(_l("Username"), validators=[DataRequired()])
     password = PasswordField(_l("Password"), validators=[DataRequired()])
     remember_me = BooleanField(_l("Remember Me"))
-    submit = SubmitField(_l("Sign In"))
+    submit = SubmitField(_l("Login"))
 
 
 class RegistrationForm(FlaskForm):
@@ -32,10 +32,12 @@ class RegistrationForm(FlaskForm):
     password2 = PasswordField(
         _l("Repeat Password"), validators=[DataRequired(), EqualTo("password")]
     )
-    submit = SubmitField(_l("Register"))
+    submit = SubmitField(_l("Sign In"))
 
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
+
+        # Set choises of dropdown for location_area and location_pref
         self.location_area.choices = (
             db.session.query(Location.area_id, Location.area_name)
             .distinct(Location.area_name)

@@ -10,7 +10,7 @@ from flask import (
     current_app,
 )
 from guess_language import guess_language
-from flask_login import current_user, login_required
+from flask_login import current_user, login_user, login_required
 from flask_babel import _, get_locale
 from project import db
 from project.main.forms import (
@@ -19,6 +19,7 @@ from project.main.forms import (
     SearchForm,
     MessagesForm,
 )
+from project.auth.forms import LoginForm, RegistrationForm
 from project.models import (
     User,
     Post,
@@ -43,15 +44,49 @@ def before_request():
     g.locale = str(get_locale())
 
 
-@bp.route("/home")
+@bp.route("/home", methods=["POST", "GET"])
 def home():
-    return render_template("home.html", title=_("Home"))
+    if current_user.is_authenticated:
+        return redirect(url_for("main.index"))
+    # Login and sign in form
+    form = LoginForm()
+    signin_form = RegistrationForm(form_name="RegistrationForm")
+
+    # Login form
+    if not signin_form.email.data and form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None or not user.check_password(form.password.data):
+            flash(_("Invalid username or password"))
+            return redirect(url_for("main.home"))
+        login_user(user, remember=form.remember_me.data)
+        return redirect(url_for("main.index"))
+
+    # Sign in form
+    if (
+        signin_form.email.data
+        and signin_form.validate_on_submit()
+        and request.form["form_name"] == "RegistrationForm"
+    ):
+        user = User(
+            username=signin_form.username.data,
+            email=signin_form.email.data,
+            location_id=signin_form.location_pref.data,
+        )
+        user.set_password(signin_form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash(_("Registered the new user successfully!"))
+        return redirect(url_for("main.home"))
+    return render_template(
+        "home.html", title=_("Home"), form=form, signin_form=signin_form
+    )
 
 
 @bp.route("/", methods=["GET", "POST"])
 @bp.route("/index/", methods=["GET", "POST"])
 @login_required
 def index():
+    # Forecast data from user's location information
     user_forecast = (
         db.session.query(
             Forecast, Location.pref_name, Location.city_name, ClothesIndex.value
@@ -63,17 +98,24 @@ def index():
         .order_by(Forecast.update_time.desc())
         .first()
     )
-    latest_post = current_user.posts.order_by(Post.timestamp.desc()).first()
-    suggestions = suggest(user_forecast.Forecast.clothes_index_id)
-    outwears = suggestions.filter(Category.parent_id == 1).all()
-    tops = suggestions.filter(Category.parent_id == 2).all()
-    bottoms = suggestions.filter(Category.parent_id == 3).all()
+
+    # Get suggested clothes with forecast information from user's clothes
+    if Forecast.query.first():
+        # Pass clothes index id
+        suggestions = suggest(user_forecast.Forecast.clothes_index_id)
+        outerwears = suggestions.filter(Category.parent_id == 1).all()
+        tops = suggestions.filter(Category.parent_id == 2).all()
+        bottoms = suggestions.filter(Category.parent_id == 3).all()
+    else:
+        outerwears = None
+        tops = None
+        bottoms = None
 
     return render_template(
         "index.html",
         title=_("Dashboard"),
         forecast=user_forecast,
-        outwears=outwears,
+        outerwears=outerwears,
         tops=tops,
         bottoms=bottoms,
     )
@@ -82,6 +124,7 @@ def index():
 @bp.route("/explore/")
 @login_required
 def explore():
+    # All user's posts
     page = request.args.get("page", 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(
         page, current_app.config["POSTS_PER_PAGE"], False
@@ -100,8 +143,10 @@ def explore():
 @bp.route("/user/<username>/", methods=["GET", "POST"])
 @login_required
 def user(username):
+    # Post form
     post_form = PostForm()
     if post_form.validate_on_submit():
+        # Check what language is used to the post
         language = guess_language(post_form.post.data)
         if language == "UNKNOWN" or len(language) > 5:
             language = ""
@@ -110,6 +155,8 @@ def user(username):
         db.session.commit()
         flash(_("Your post is now live!"))
         return redirect(url_for("main.user", username=current_user.username))
+
+    # Profile edit form
     edit_form = EditProfileForm(current_user.username)
     if edit_form.validate_on_submit():
         current_user.username = edit_form.username.data
@@ -259,6 +306,7 @@ def translate_text():
 @bp.route("/search/")
 @login_required
 def search():
+    print(g.search_form)
     # print(g.search_form.validate())
     # if not g.search_form.validate():
     #     return redirect(url_for("main.explore"))
@@ -285,8 +333,8 @@ def search():
     return render_template(
         "search.html",
         title=_("search"),
-        # users=users,
-        # utotal=utotal,
+        users=users,
+        utotal=utotal,
         posts=posts,
         ptotal=ptotal,
         next_url=next_url,
@@ -356,27 +404,3 @@ def export_posts():
         current_user.launch_task("export_posts", _("Exporting posts..."))
         db.session.commit()
     return redirect(url_for("main.user", username=current_user.username))
-
-
-@bp.route("/scrape_forecast/")
-@login_required
-def scrape_forecast():
-    if current_user.get_task_in_progress("scrape_forecast"):
-        flash(_("An export task is currently in progress."))
-    else:
-        current_user.launch_task("scrape_forecast", _("Scraping forecast..."))
-        db.session.commit()
-    next_page = request.args.get("next")
-    if not next_page or url_parse(next_page).netloc != "":
-        next_page = url_for("main.index")
-    return redirect(next_page)
-
-
-from project.tasks import dev_scraping
-
-
-@bp.route("/test_scraping/")
-@login_required
-def test_scraping():
-    dev_scraping()
-    return redirect(url_for("main.index"))

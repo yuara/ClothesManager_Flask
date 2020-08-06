@@ -9,12 +9,9 @@ RUN pip install --upgrade pip
 COPY ./requirements.txt ./
 RUN pip install -r requirements.txt
 
-RUN apt-get update
-RUN apt-get install -y cron
+COPY scrapyd.sh ./
+RUN chmod 0755 /usr/src/app/scrapyd.sh
 
-COPY cron-d ./.cron-d
-RUN crontab .cron-d
+COPY ./scrapyd.conf ./scraping  ./
 
-COPY project migrations manage.py entrypoint.sh ./
-
-ENTRYPOINT ["sh","/usr/src/app/entrypoint.sh"]
+ENTRYPOINT ["/usr/src/app/scrapyd.sh"]

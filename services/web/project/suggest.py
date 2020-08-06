@@ -19,26 +19,3 @@ def suggest(user_index_id):
         .filter(category_index.c.clothes_index_id == user_index_id)
     )
     return user_clothes
-
-    # outwears = user_clothes.filter(Category.parent_id == 1).all()
-    # tops = user_clothes.filter(Category.parent_id == 2).all()
-    # bottoms = user_clothes.filter(Category.parent_id == 3).all()
-    #
-    # outfits = []
-    # if outwears:
-    #     for outwear in outwears:
-    #         for top in tops:
-    #             if top.conditional == 0:
-    #                 for bottom in bottoms:
-    #                     outfits.append([outwear, top, bottom])
-    #             else:
-    #                 for bottom in bottoms:
-    #                     x = ["", top, bottom]
-    #                     if x not in outfits:
-    #                         outfits.append(x)
-    #
-    # else:
-    #     for top in tops:
-    #         for bottom in bottoms:
-    #             outfits.append(["", top, bottom])
-    # return outfits

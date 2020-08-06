@@ -22,14 +22,14 @@
                   <table class="table table-hover">
                     <tr>
                       <th>{{ _('Outfit Name') }}</th>
-                      <th>{{ _('Jackets') }}</th>
+                      <th>{{ _('Outerwears') }}</th>
                       <th>{{ _('Tops 1') }}</th>
                       <th>{{ _('Tops 2') }}</th>
                       <th>{{ _('Bottoms') }}</th>
                       <th>{{ _('Settime') }}</th>
                     </tr>
                     {% for name, time,
-                    jacket,
+                    outerwear,
                     top_1,
                     top_2,
                     bottom in user_outfits %}
@@ -37,8 +37,8 @@
                         <td>{{ name }}</td>
 
                         <td>
-                          {% if jacket %}
-                            {{ jacket }}
+                          {% if outerwear %}
+                            {{ outerwear }}
                           {% else %}
                             ----------
                           {% endif %}
@@ -70,17 +70,17 @@
                     {% endfor %}
                   </table>
                   <nav aria-label="...">
-                    <ul class="pager">
-                      <li class="previous{% if not prev_url %} disabled{% endif %}">
-                        <a href="{{ prev_url or '#' }}">
-                          <span aria-hidden="true">&larr;</span>
-                          {{ _('Newer clothes') }}
+                    <ul class="pagination justify-content-center">
+                      <li class="page-item {% if not prev_url %} disabled{% endif %} text-left">
+                        <a class="page-link" href="{{ prev_url or '#'}}" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                          <span class="sr-only">Previous</span>
                         </a>
                       </li>
-                      <li class="next{% if not next_url %} disabled{% endif %}">
-                        <a href="{{ next_url or '#' }}">
-                          {{ _('Older clothes') }}
-                          <span aria-hidden="true">&rarr;</span>
+                      <li class="page-item {% if not next_url %} disabled{% endif %}">
+                        <a class="page-link" href="{{ next_url or '#'}}" aria-label="Next">
+                          <span aria-hidden="true">&raquo;</span>
+                          <span class="sr-only">Next</span>
                         </a>
                       </li>
                     </ul>
@@ -89,7 +89,7 @@
                   {{ _('Set your own outfit!') }}
                 {% endif %}
               {% else %}
-                <a class="btn bg-secondary" href="{{ url_for('closet.add_clothes') }}" role="button">{{ _('Add your new clothes!') }}</a>
+                <a class="btn bg-info" href="{{ url_for('closet.add_clothes') }}" role="button">{{ _('Add your new clothes!') }}</a>
               {% endif %}
             </div>
           </div>

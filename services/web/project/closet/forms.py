@@ -19,6 +19,8 @@ class ClothesForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(ClothesForm, self).__init__(*args, **kwargs)
+
+        # Create category dropdown, both of parent and child ones
         self.parent_category.choices = (
             db.session.query(Category.parent_id, Category.parent_name)
             .distinct(Category.parent_name)
@@ -31,7 +33,7 @@ class ClothesForm(FlaskForm):
 
 class OutfitForm(FlaskForm):
     name = StringField(_l("Name"), validators=[Length(min=0, max=30)])
-    jackets = SelectField(_l("Jackets"), coerce=int, default=0)
+    outerwears = SelectField(_l("Outerwears"), coerce=int, default=0)
     tops_1 = SelectField(_l("Tops 1"), coerce=int, validators=[DataRequired()])
     tops_2 = SelectField(_l("Tops 2"), coerce=int, default=0)
     bottoms = SelectField(_l("Bottoms"), coerce=int, validators=[DataRequired()])
@@ -41,7 +43,8 @@ class OutfitForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         super(OutfitForm, self).__init__(*args, **kwargs)
 
-        self.jackets.choices = [
+        # Create dropdowns of outerwears, tops and bottoms from a user's own clothes
+        self.outerwears.choices = [
             (x.id, x.name)
             for x in Clothes.query.join(User, User.id == Clothes.owner_id)
             .join(Category, Category.id == Clothes.category_id)
@@ -49,7 +52,8 @@ class OutfitForm(FlaskForm):
             .filter(Category.parent_name == "Outerwears")
             .all()
         ]
-        self.jackets.choices.insert(0, (0, "None"))
+        # Add None element
+        self.outerwears.choices.insert(0, (0, "None"))
 
         self.tops_1.choices = [
             (x.id, x.name)
@@ -68,6 +72,7 @@ class OutfitForm(FlaskForm):
             .filter(Category.parent_name == "Tops")
             .all()
         ]
+        # Add None element
         self.tops_2.choices.insert(0, (0, "None"))
 
         self.bottoms.choices = [
