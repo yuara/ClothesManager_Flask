@@ -19,7 +19,7 @@
 
 .home-box .top-title {
   font-size: 50px;
-  font-family: -webkit-pictograph;
+  font-family: initial;
 }
 
 .top-img img {
