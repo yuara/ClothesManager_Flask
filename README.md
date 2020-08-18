@@ -12,12 +12,14 @@ Clone this repositry
 $ git clone https://github.com/yuara/ClothesManager.git
 ```
 
-You only build and up the docker-compose
+## Run
+
+Change [Change Here] in .env.sample for you and the file name to .env.dev.
+
+Then build and up the docker-compose
 
 ```
 $ docker-compose up -d --build
 ```
 
 Access to `http://127.0.0.1:5000/`
-
-
