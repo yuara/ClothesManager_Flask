@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 import unittest
 from project import create_app, db
-from project.models import User, Post
-from project.config import Config
+from project.models import User, Post, Message, Clothes, Outfit
+from config import Config
 
 
 class TestConfig(Config):
@@ -10,7 +10,7 @@ class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = "sqlite://"
 
 
-class UseModelCase(unittest.TestCase):
+class UserModelCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app(TestConfig)
         self.app_context = self.app.app_context()
@@ -103,6 +103,75 @@ class UseModelCase(unittest.TestCase):
         self.assertEqual(f2, [p2, p3])
         self.assertEqual(f3, [p3, p4])
         self.assertEqual(f4, [p4])
+
+
+class MessageModelClass(unittest.TestCase):
+    def setUp(self):
+        self.app = create_app(TestConfig)
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
+
+    def test_message_body(self):
+        u1 = User(username="john", email="john@example.com")
+        u2 = User(username="susan", email="susan@example.com")
+        db.session.add_all([u1, u2])
+
+        msg = Message(author=u1, recipient=u2, body="message to susan")
+        db.session.add(msg)
+        db.session.commit()
+
+        u2_msg = u2.messages_received.first()
+        self.assertEqual(u2_msg.body, "message to susan")
+
+    def test_unread_message(self):
+        u1 = User(username="john", email="john@example.com")
+        u2 = User(username="susan", email="susan@example.com")
+        db.session.add_all([u1, u2])
+
+        first_msg = Message(author=u1, recipient=u2, body="first message")
+        db.session.add(first_msg)
+        db.session.commit()
+
+        self.assertEqual(u2.new_messages(), 1)
+
+        second_msg = Message(author=u1, recipient=u2, body="second message")
+        db.session.add(second_msg)
+        db.session.commit()
+
+        self.assertEqual(u2.new_messages(), 2)
+
+        u2.last_message_read_time = datetime.utcnow()
+        self.assertEqual(u2.new_messages(), 0)
+
+
+class ClothesTestClass(unittest.TestCase):
+    def setUp(self):
+        self.app = create_app(TestConfig)
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
+
+    def test_add_clothes(self):
+        u = User(username="john", email="john@example.com")
+        db.session.add(u)
+        db.session.commit()
+
+        c1 = Clothes(name="c1", category_id=1, owner=u)
+        db.session.add(c1)
+        db.session.commit()
+
+        self.assertEqual(c1.name, "c1")
 
 
 if __name__ == "__main__":
