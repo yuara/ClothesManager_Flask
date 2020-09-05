@@ -14,10 +14,22 @@ $ git clone https://github.com/yuara/ClothesManager_Flask.git
 
 ## Run
 
-Build and up to run this app
+Change a directory
+
+```
+$ cd ClothesManager_Flask
+```
+
+Build and up
 
 ```
 $ docker-compose up -d --build
 ```
 
-Access to `http://127.0.0.1:5000/`
+Check logs until this app is completed
+
+```
+$ docker-compose logs -f
+```
+
+Then access to `http://127.0.0.1:5000/`
