@@ -29,7 +29,6 @@ flask-httpauth = "*"
 scrapy = "*"
 elasticsearch = "==7.7.0"
 twisted = "*"
-crochet = "*"
 
 [requires]
 python_version = "3.8"
