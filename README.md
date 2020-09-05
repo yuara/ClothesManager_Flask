@@ -9,14 +9,12 @@ You need [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](http
 Clone this repositry
 
 ```
-$ git clone https://github.com/yuara/ClothesManager.git
+$ git clone https://github.com/yuara/ClothesManager_Flask.git
 ```
 
 ## Run
 
-Change [Change Here] in .env.sample for you and the file name to .env.dev.
-
-Then build and up the docker-compose
+Build and up to run this app
 
 ```
 $ docker-compose up -d --build
