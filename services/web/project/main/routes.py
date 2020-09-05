@@ -48,12 +48,12 @@ def before_request():
 def home():
     if current_user.is_authenticated:
         return redirect(url_for("main.index"))
-    # Login and sign in form
+    # Login and sign up form
     form = LoginForm()
-    signin_form = RegistrationForm(form_name="RegistrationForm")
+    signup_form = RegistrationForm(form_name="RegistrationForm")
 
     # Login form
-    if not signin_form.email.data and form.validate_on_submit():
+    if not signup_form.email.data and form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash(_("Invalid username or password"))
@@ -61,24 +61,24 @@ def home():
         login_user(user, remember=form.remember_me.data)
         return redirect(url_for("main.index"))
 
-    # Sign in form
+    # Sign up form
     if (
-        signin_form.email.data
-        and signin_form.validate_on_submit()
+        signup_form.email.data
+        and signup_form.validate_on_submit()
         and request.form["form_name"] == "RegistrationForm"
     ):
         user = User(
-            username=signin_form.username.data,
-            email=signin_form.email.data,
-            location_id=signin_form.location_pref.data,
+            username=signup_form.username.data,
+            email=signup_form.email.data,
+            location_id=signup_form.location_pref.data,
         )
-        user.set_password(signin_form.password.data)
+        user.set_password(signup_form.password.data)
         db.session.add(user)
         db.session.commit()
         flash(_("Registered the new user successfully!"))
         return redirect(url_for("main.home"))
     return render_template(
-        "home.html", title=_("Home"), form=form, signin_form=signin_form
+        "home.html", title=_("Home"), form=form, signup_form=signup_form
     )
 
 

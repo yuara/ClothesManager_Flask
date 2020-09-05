@@ -32,7 +32,7 @@ class RegistrationForm(FlaskForm):
     password2 = PasswordField(
         _l("Repeat Password"), validators=[DataRequired(), EqualTo("password")]
     )
-    submit = SubmitField(_l("Sign In"))
+    submit = SubmitField(_l("Sign Up"))
 
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)

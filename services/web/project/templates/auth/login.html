@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<h1 class="mt-4">Sign In</h1>
+<h1 class="mt-4">Login</h1>
 <ol class="breadcrumb mb-4">
-  <li class="breadcrumb-item active">Sign In</li>
+  <li class="breadcrumb-item active">Login</li>
 </ol>
 <form action="" method="post" novalidate>
   {{ form.hidden_tag() }}
@@ -24,7 +24,7 @@
   <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
   <p>{{ form.submit() }}</p>
 </form>
-<p>New User? Click <a href="{{ url_for('auth.register') }}">Here</a> to Register!</p>
+<p>New User? Click <a href="{{ url_for('auth.register') }}">Here</a> to Sign Up!</p>
 <p>
   Forgot Your Password?
   Click <a href="{{ url_for('auth.reset_password_request') }}">Here</a> to Reset It
