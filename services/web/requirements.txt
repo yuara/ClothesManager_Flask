@@ -63,7 +63,7 @@ service-identity==18.1.0
 six==1.15.0
 sqlalchemy==1.3.19
 twisted==20.3.0
-urllib3==1.25.10
+urllib3==1.26.5
 uuid==1.30
 visitor==0.1.3
 w3lib==1.22.0
